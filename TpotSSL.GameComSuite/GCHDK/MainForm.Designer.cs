@@ -70,6 +70,12 @@
             this.loadBankBinDialog = new System.Windows.Forms.OpenFileDialog();
             this.openASMFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveRomDialog = new System.Windows.Forms.SaveFileDialog();
+            this.assemblyFiles = new System.Windows.Forms.ListBox();
+            this.asmNameLabel = new System.Windows.Forms.Label();
+            this.asmFolderDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.openASMFolderButton = new System.Windows.Forms.Button();
+            this.openASMFileButton = new System.Windows.Forms.Button();
+            this.loadASMRomButton = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gameIdBox)).BeginInit();
@@ -205,6 +211,7 @@
             this.iconBankBox.Name = "iconBankBox";
             this.iconBankBox.Size = new System.Drawing.Size(64, 20);
             this.iconBankBox.TabIndex = 24;
+            this.iconBankBox.ValueChanged += new System.EventHandler(this.iconBankBox_ValueChanged);
             // 
             // iconYBox
             // 
@@ -218,6 +225,7 @@
             this.iconYBox.Name = "iconYBox";
             this.iconYBox.Size = new System.Drawing.Size(64, 20);
             this.iconYBox.TabIndex = 23;
+            this.iconYBox.ValueChanged += new System.EventHandler(this.iconYBox_ValueChanged);
             // 
             // iconXBox
             // 
@@ -231,6 +239,7 @@
             this.iconXBox.Name = "iconXBox";
             this.iconXBox.Size = new System.Drawing.Size(64, 20);
             this.iconXBox.TabIndex = 22;
+            this.iconXBox.ValueChanged += new System.EventHandler(this.iconXBox_ValueChanged);
             // 
             // loadBankBin
             // 
@@ -413,6 +422,11 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.loadASMRomButton);
+            this.tabPage2.Controls.Add(this.openASMFileButton);
+            this.tabPage2.Controls.Add(this.openASMFolderButton);
+            this.tabPage2.Controls.Add(this.asmNameLabel);
+            this.tabPage2.Controls.Add(this.assemblyFiles);
             this.tabPage2.Controls.Add(this.compileASMButton);
             this.tabPage2.Controls.Add(this.label8);
             this.tabPage2.Controls.Add(this.asmFileButton);
@@ -421,13 +435,13 @@
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Size = new System.Drawing.Size(895, 604);
             this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Compiler";
+            this.tabPage2.Text = "Assembler";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // compileASMButton
             // 
             this.compileASMButton.Enabled = false;
-            this.compileASMButton.Location = new System.Drawing.Point(6, 52);
+            this.compileASMButton.Location = new System.Drawing.Point(6, 231);
             this.compileASMButton.Name = "compileASMButton";
             this.compileASMButton.Size = new System.Drawing.Size(75, 23);
             this.compileASMButton.TabIndex = 3;
@@ -440,9 +454,9 @@
             this.label8.AutoSize = true;
             this.label8.Location = new System.Drawing.Point(3, 10);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(67, 13);
+            this.label8.Size = new System.Drawing.Size(80, 13);
             this.label8.TabIndex = 2;
-            this.label8.Text = "Assembly file";
+            this.label8.Text = "Assembly folder";
             // 
             // asmFileButton
             // 
@@ -456,6 +470,7 @@
             // 
             // compileASMFileBox
             // 
+            this.compileASMFileBox.Enabled = false;
             this.compileASMFileBox.Location = new System.Drawing.Point(6, 26);
             this.compileASMFileBox.Name = "compileASMFileBox";
             this.compileASMFileBox.Size = new System.Drawing.Size(297, 20);
@@ -520,7 +535,7 @@
             this.loadRomButton.Name = "loadRomButton";
             this.loadRomButton.Size = new System.Drawing.Size(75, 23);
             this.loadRomButton.TabIndex = 0;
-            this.loadRomButton.Text = "Load Rom";
+            this.loadRomButton.Text = "Load ROM";
             this.loadRomButton.UseVisualStyleBackColor = true;
             this.loadRomButton.Click += new System.EventHandler(this.loadRomButton_Click);
             // 
@@ -532,7 +547,7 @@
             this.saveRomButton.Name = "saveRomButton";
             this.saveRomButton.Size = new System.Drawing.Size(75, 23);
             this.saveRomButton.TabIndex = 2;
-            this.saveRomButton.Text = "Save Rom";
+            this.saveRomButton.Text = "Save ROM";
             this.saveRomButton.UseVisualStyleBackColor = true;
             this.saveRomButton.Click += new System.EventHandler(this.saveRomButton_Click);
             // 
@@ -569,6 +584,61 @@
             this.saveRomDialog.FileName = "gcbuild0.bin";
             this.saveRomDialog.Filter = "Game.Com Roms|*.bin";
             // 
+            // assemblyFiles
+            // 
+            this.assemblyFiles.FormattingEnabled = true;
+            this.assemblyFiles.Location = new System.Drawing.Point(6, 52);
+            this.assemblyFiles.Name = "assemblyFiles";
+            this.assemblyFiles.Size = new System.Drawing.Size(297, 173);
+            this.assemblyFiles.TabIndex = 4;
+            this.assemblyFiles.SelectedIndexChanged += new System.EventHandler(this.assemblyFiles_SelectedIndexChanged);
+            // 
+            // asmNameLabel
+            // 
+            this.asmNameLabel.AutoSize = true;
+            this.asmNameLabel.Location = new System.Drawing.Point(5, 257);
+            this.asmNameLabel.Name = "asmNameLabel";
+            this.asmNameLabel.Size = new System.Drawing.Size(37, 13);
+            this.asmNameLabel.TabIndex = 5;
+            this.asmNameLabel.Text = "Errors:";
+            // 
+            // asmFolderDialog
+            // 
+            this.asmFolderDialog.RootFolder = System.Environment.SpecialFolder.MyComputer;
+            // 
+            // openASMFolderButton
+            // 
+            this.openASMFolderButton.Enabled = false;
+            this.openASMFolderButton.Location = new System.Drawing.Point(347, 25);
+            this.openASMFolderButton.Name = "openASMFolderButton";
+            this.openASMFolderButton.Size = new System.Drawing.Size(92, 22);
+            this.openASMFolderButton.TabIndex = 6;
+            this.openASMFolderButton.Text = "Open Folder";
+            this.openASMFolderButton.UseVisualStyleBackColor = true;
+            this.openASMFolderButton.Click += new System.EventHandler(this.openASMFolderButton_Click);
+            // 
+            // openASMFileButton
+            // 
+            this.openASMFileButton.Enabled = false;
+            this.openASMFileButton.Location = new System.Drawing.Point(309, 53);
+            this.openASMFileButton.Name = "openASMFileButton";
+            this.openASMFileButton.Size = new System.Drawing.Size(75, 23);
+            this.openASMFileButton.TabIndex = 7;
+            this.openASMFileButton.Text = "Open File";
+            this.openASMFileButton.UseVisualStyleBackColor = true;
+            this.openASMFileButton.Click += new System.EventHandler(this.openASMFileButton_Click);
+            // 
+            // loadASMRomButton
+            // 
+            this.loadASMRomButton.Enabled = false;
+            this.loadASMRomButton.Location = new System.Drawing.Point(228, 231);
+            this.loadASMRomButton.Name = "loadASMRomButton";
+            this.loadASMRomButton.Size = new System.Drawing.Size(75, 23);
+            this.loadASMRomButton.TabIndex = 8;
+            this.loadASMRomButton.Text = "Load ROM";
+            this.loadASMRomButton.UseVisualStyleBackColor = true;
+            this.loadASMRomButton.Click += new System.EventHandler(this.loadASMRomButton_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -579,7 +649,7 @@
             this.Controls.Add(this.loadRomButton);
             this.Controls.Add(this.tabControl1);
             this.Name = "MainForm";
-            this.Text = "Game.Com Homebrew Development Kit";
+            this.Text = "Game.com Homebrew Development Kit";
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
@@ -648,6 +718,12 @@
         private System.Windows.Forms.ToolStripMenuItem saveRomToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveRomAsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private System.Windows.Forms.Label asmNameLabel;
+        private System.Windows.Forms.ListBox assemblyFiles;
+        private System.Windows.Forms.FolderBrowserDialog asmFolderDialog;
+        private System.Windows.Forms.Button loadASMRomButton;
+        private System.Windows.Forms.Button openASMFileButton;
+        private System.Windows.Forms.Button openASMFolderButton;
     }
 }
 

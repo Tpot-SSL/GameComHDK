@@ -94,6 +94,9 @@
     <None Include="ASM\Assembler\Compile.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="ASM\Assembler\data.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="ASM\Assembler\REG8521.CFG">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

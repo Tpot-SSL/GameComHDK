@@ -14,66 +14,74 @@ namespace TpotSSL.GameComTools.GCHDK {
 
         public GameComRom CurrentROM;
         public int CurrentBankIndex;
+
+        public static readonly string DOSFolder     = Environment.CurrentDirectory + "\\ASM";
+        public static readonly string ASMFolder     = $"{DOSFolder}\\Assembler";
+        public static readonly string SourceFolder  = $"{ASMFolder}\\source";
+        public static readonly string ErrorFile     = $"{ASMFolder}\\ASM85.ERR";
+        public static readonly byte[] BuildData     = File.ReadAllBytes($"{ASMFolder}\\data.bin");
         public GameComBank CurrentBank => CurrentROM.MemoryBanks[CurrentBankIndex];
 
-        public MainForm() {
-            InitializeComponent();
-        }
+        public MainForm() => InitializeComponent();
 
         private void loadRomButton_Click(object sender, EventArgs e) {
             if(loadRomDialog.ShowDialog() != DialogResult.OK)
                 return;
 
-            CurrentBankIndex = 0;
-            bankLabel.Text = "Bank: 000";
-            CurrentROM?.Dispose();
-            CurrentROM = new GameComRom(loadRomDialog.FileName);
-            SetBoxes();
+            LoadRom(loadRomDialog.FileName);
         }
 
         public void SetBank(int index){
-            CurrentBankIndex = index;
-            prevBankButton.Enabled = CurrentBankIndex > 0;
-            nextbankButton.Enabled = CurrentBankIndex < CurrentROM.MemoryBanks.Count;
-            bankLabel.Text = "Bank: " + CurrentBankIndex.ToString("000");
-            bankImage.Image = CurrentROM.MemoryBanks[CurrentBankIndex].Image.Image;
+            CurrentBankIndex            = index;
+            prevBankButton.Enabled      = CurrentBankIndex > 0;
+            nextbankButton.Enabled      = CurrentBankIndex < CurrentROM.MemoryBanks.Count;
+            bankLabel.Text              = "Bank: " + CurrentBankIndex.ToString("000");
+            bankImage.Image             = CurrentROM.MemoryBanks[CurrentBankIndex].Image.Bitmap;
             fullRomImage.Invalidate();
+        }
+
+        public void LoadRom(string filename) {
+            CurrentBankIndex    = 0;
+            bankLabel.Text      = "Bank: 000";
+            CurrentROM?.Dispose();
+            CurrentROM          = new GameComRom(filename);
+            SetBoxes();
         }
 
         public void SetBoxes() {
             if(CurrentROM == null)
                 return;
 
-            nameBox.Enabled = true;
-            gameIconBox.Enabled = true;
-            gameIdBox.Enabled = true;
-            iconXBox.Enabled = true;
-            iconYBox.Enabled = true;
-            iconBankBox.Enabled = true;
-            bankImage.Enabled = true;
-            fullRomImage.Enabled = true;
-            saveBankBin.Enabled = true;
-            loadBankBin.Enabled = true;
-            saveBankImage.Enabled = true;
-            loadBankImage.Enabled = true;
-            prevBankButton.Enabled = true;
-            nextbankButton.Enabled = true;
-            saveRomButton.Enabled = true;
+            nameBox.Enabled         = true;
+            gameIconBox.Enabled     = true;
+            gameIdBox.Enabled       = true;
+            iconXBox.Enabled        = true;
+            iconYBox.Enabled        = true;
+            iconBankBox.Enabled     = true;
+            bankImage.Enabled       = true;
+            fullRomImage.Enabled    = true;
+            saveBankBin.Enabled     = true;
+            loadBankBin.Enabled     = true;
+            saveBankImage.Enabled   = true;
+            loadBankImage.Enabled   = true;
+            prevBankButton.Enabled  = true;
+            nextbankButton.Enabled  = true;
+            saveRomButton.Enabled   = true;
 
-            nameBox.Text = CurrentROM.GameName;
-            gameIconBox.Image = CurrentROM.GameIcon;
-            gameIdBox.Text = CurrentROM.GameId.ToString();
-            iconXBox.Text = CurrentROM.IconX.ToString();
-            iconYBox.Text = CurrentROM.IconY.ToString();
-            iconBankBox.Text = CurrentROM.IconBankNo.ToString();
-            romSizeBox.Text = (CurrentROM.SizeInBytes/1024).ToString();
+            nameBox.Text        = CurrentROM.GameName;
+            gameIconBox.Image   = CurrentROM.GameIcon;
+            gameIdBox.Text      = CurrentROM.GameId.ToString();
+            iconXBox.Text       = CurrentROM.IconX.ToString();
+            iconYBox.Text       = CurrentROM.IconY.ToString();
+            iconBankBox.Text    = CurrentROM.IconBankNo.ToString();
+            romSizeBox.Text     = (CurrentROM.SizeInBytes/1024).ToString();
 
             recgonizedGameLabel.Visible = GameComRom.KnownGamesById.ContainsKey(CurrentROM.GameId);
             if(recgonizedGameLabel.Visible)
                 recgonizedGameLabel.Text = "Recognized Game ID: "+GameComRom.GetGameName(CurrentROM.GameId);
 
-            fullRomImage.Image = CurrentROM.FullImage.Image;
-            bankImage.Image = CurrentROM.MemoryBanks[CurrentBankIndex].Image.Image;
+            fullRomImage.Image  = CurrentROM.FullImage.Bitmap;
+            bankImage.Image     = CurrentROM.MemoryBanks[CurrentBankIndex].Image.Bitmap;
 
             fullRomImage.Invalidate();
         }
@@ -82,11 +90,11 @@ namespace TpotSSL.GameComTools.GCHDK {
             if(CurrentROM == null)
                 return;
 
-            double xMult = (double)fullRomImage.Width/CurrentROM.FullImage.Width;
-            double yMult = (double)fullRomImage.Height/CurrentROM.FullImage.Height;
+            double  xMult   = (double)fullRomImage.Width/CurrentROM.FullImage.Width;
+            double  yMult   = (double)fullRomImage.Height/CurrentROM.FullImage.Height;
 
-            int x = (int)(256*xMult*CurrentBankIndex);
-            int y = 0;
+            int     x       = (int)(256*xMult*CurrentBankIndex);
+            int     y       = 0;
 
             while(x >= fullRomImage.Width) {
                 x -= fullRomImage.Width;
@@ -97,14 +105,8 @@ namespace TpotSSL.GameComTools.GCHDK {
             e.Graphics.DrawRectangle(Pens.Red, rect);
         }
 
-
-        private void nextbankButton_Click(object sender, EventArgs e) {
-            SetBank(CurrentBankIndex + 1);
-        }
-
-        private void prevBankButton_Click(object sender, EventArgs e){
-            SetBank(CurrentBankIndex - 1);
-        }
+        private void nextbankButton_Click(object sender, EventArgs e) => SetBank(CurrentBankIndex + 1);
+        private void prevBankButton_Click(object sender, EventArgs e) => SetBank(CurrentBankIndex - 1);
 
         private void saveBankBin_Click(object sender, EventArgs e){
             if(saveBankBinDialog.ShowDialog() != DialogResult.OK)
@@ -124,10 +126,11 @@ namespace TpotSSL.GameComTools.GCHDK {
             if(loadBankImageDialog.ShowDialog() != DialogResult.OK)
                 return;
 
-            CurrentBank.Image = GameComImage.FromFile(loadBankImageDialog.FileName, false);
-            CurrentROM.ReplaceBank(CurrentBankIndex, CurrentBank.Image.RawBytes, CurrentBank.Image.Image);
-            fullRomImage.Image = CurrentROM.FullImage.Image;
-            bankImage.Image = CurrentROM.MemoryBanks[CurrentBankIndex].Image.Image;
+            CurrentBank.Image       = GameComImage.FromFile(loadBankImageDialog.FileName, false);
+            CurrentROM.ReplaceBank(CurrentBankIndex, CurrentBank.Image.RawBytes, CurrentBank.Image.Bitmap);
+            fullRomImage.Image      = CurrentROM.FullImage.Bitmap;
+            bankImage.Image         = CurrentROM.MemoryBanks[CurrentBankIndex].Image.Bitmap;
+
             fullRomImage.Refresh();
             bankImage.Refresh();
         }
@@ -136,49 +139,87 @@ namespace TpotSSL.GameComTools.GCHDK {
             if(loadBankBinDialog.ShowDialog() != DialogResult.OK)
                 return;
 
-            CurrentBank.Image = GameComImage.FromFile(loadBankBinDialog.FileName, false);
-            CurrentROM.ReplaceBank(CurrentBankIndex, CurrentBank.Image.RawBytes, CurrentBank.Image.Image);
-            fullRomImage.Image = CurrentROM.FullImage.Image;
-            bankImage.Image = CurrentROM.MemoryBanks[CurrentBankIndex].Image.Image;
+            CurrentBank.Image       = GameComImage.FromFile(loadBankBinDialog.FileName, false);
+            CurrentROM.ReplaceBank(CurrentBankIndex, CurrentBank.Image.RawBytes, CurrentBank.Image.Bitmap);
+            fullRomImage.Image      = CurrentROM.FullImage.Bitmap;
+            bankImage.Image         = CurrentROM.MemoryBanks[CurrentBankIndex].Image.Bitmap;
+
             fullRomImage.Refresh();
             bankImage.Refresh();
         }
 
         private void asmFileButton_Click(object sender, EventArgs e) {
-            if(openASMFileDialog.ShowDialog() != DialogResult.OK)
+            if(asmFolderDialog.ShowDialog() != DialogResult.OK)
                 return;
 
-            compileASMFileBox.Text = openASMFileDialog.FileName;
-            compileASMButton.Enabled = true;
+            compileASMFileBox.Text      = asmFolderDialog.SelectedPath;
+            loadASMRomButton.Enabled    = false;
+            openASMFileButton.Enabled   = false;
+            compileASMButton.Enabled    = true;
+            openASMFolderButton.Enabled = true;
+            assemblyFiles.Items.AddRange(Directory.GetFiles(compileASMFileBox.Text));
         }
 
         private void compileASMButton_Click(object sender, EventArgs e){
-            File.Delete(Environment.CurrentDirectory + "\\ASM\\Assembler\\source.asm");
-            File.Delete(Environment.CurrentDirectory + "\\ASM\\Assembler\\gcbuild.bin");
-            File.Delete(Environment.CurrentDirectory + "\\ASM\\Assembler\\ASM85.ERR");
+            loadASMRomButton.Enabled = false;
+            File.Delete($"{ASMFolder}\\build.bin");
+            File.Delete($"{ASMFolder}\\ASM85.ERR");
+            Directory.CreateDirectory(SourceFolder);
 
-            File.Copy(compileASMFileBox.Text, Environment.CurrentDirectory + "\\ASM\\Assembler\\source.asm");
-            Process.Start(Environment.CurrentDirectory + "\\ASM\\DosBoxPortable.exe", "\"..\\..\\Assembler\\compile.bat\" -noconsole -exit")?.WaitForExit();
+            string[] files = Directory.GetFiles(SourceFolder);
+            for(int i = 0; i < files.Length; ++i)
+                File.Delete(files[i]);
+
+            files = Directory.GetFiles(compileASMFileBox.Text, "*.*", SearchOption.TopDirectoryOnly);
+
+            Dictionary<int, GameComImage> images = new Dictionary<int, GameComImage>();
+            for(int i = 0; i < files.Length; ++i)
+                File.Copy(files[i], SourceFolder+"\\"+Path.GetFileName(files[i]));
+
+            if(Directory.Exists(compileASMFileBox.Text + "\\gfx")) {
+                files = Directory.GetFiles(compileASMFileBox.Text + "\\gfx", "*.bin", SearchOption.TopDirectoryOnly);
+                for(int i = 0; i < files.Length; ++i) {
+                    string path     = Path.GetFileNameWithoutExtension(files[i]);
+                    int num         = path.StartsWith("bank") ? int.Parse(path.Substring(4)) : int.Parse(path);
+                    images.Add(num, GameComImage.FromFile(files[i]));
+                }
+                files = Directory.GetFiles(compileASMFileBox.Text + "\\gfx", "*.png", SearchOption.TopDirectoryOnly);
+                for(int i = 0; i < files.Length; ++i) {
+                    string path     = Path.GetFileNameWithoutExtension(files[i]);
+                    int num         = path.StartsWith("bank") ? int.Parse(path.Substring(4)) : int.Parse(path);
+                    images.Add(num, GameComImage.FromFile(files[i]));
+                }
+            }
+
+            Process.Start($"{DOSFolder}\\DosBoxPortable.exe", "\"..\\..\\Assembler\\compile.bat\" -noconsole -exit")?.WaitForExit();
 
             while(true){
-                if(File.Exists(Environment.CurrentDirectory + "\\ASM\\Assembler\\ASM85.ERR")) {
-                    if(File.Exists(Environment.CurrentDirectory + "\\ASM\\Assembler\\gcbuild.bin")) {
+                if(File.Exists(ErrorFile)) {
+                    if(File.Exists($"{ASMFolder}\\build.bin") && new FileInfo($"{ASMFolder}\\build.bin").Length > 8) {
                         System.Threading.Thread.Sleep(100);
-                        byte[] startB = new byte[0x40000];
-                        byte[] asm = File.ReadAllBytes(Environment.CurrentDirectory + "\\ASM\\Assembler\\gcbuild.bin");
+                        
+                        byte[] asm      = File.ReadAllBytes($"{ASMFolder}\\build.bin");
+                        int length      = Math.Max(asm.Length, BuildData.Length);
+                        int maxlength   = (asm.Length + 0x40000 < 1048576) ? 1048576 : 2097152;
+                       
+                        byte[] fullFile = new byte[maxlength];
+                        for(int i = 0; i < length; ++i) 
+                            fullFile[0x40000 + i] = (i < asm.Length ? asm[i] : BuildData[i]);
 
-                        int maxlength = (asm.Length + startB.Length < 1048576) ? 1048576 : 2097152;
+                        int[] keys = images.Keys.ToArray();
 
-                        byte[] end = new byte[maxlength - (asm.Length + startB.Length)];
+                        for(int i = 0; i < images.Count; ++i) {
+                            int num = keys[i];
+                            Array.Copy(images[num].RawBytes, 0, fullFile, num * GameComBank.SizeInBytes, GameComBank.SizeInBytes);
+                        }
 
-                        byte[] fullFile = startB.Concat(asm).Concat(end).ToArray();
-
-                        File.WriteAllBytes(Environment.CurrentDirectory + "\\ASM\\Assembler\\gcbuild.bin", fullFile);
-                        File.Delete(Path.GetDirectoryName(compileASMFileBox.Text) + "\\gcbuild.bin");
-                        File.Copy(Environment.CurrentDirectory + "\\ASM\\Assembler\\gcbuild.bin", Path.GetDirectoryName(compileASMFileBox.Text) + "\\gcbuild.bin");
+                        File.Delete($"{SourceFolder}\\build.bin");
+                        File.WriteAllBytes($"{compileASMFileBox.Text}\\build.bin", fullFile);
+                        asmNameLabel.Text           = "Errors: None";
+                        loadASMRomButton.Enabled    = true;
                         break;
-                    } else if(new FileInfo(Environment.CurrentDirectory + "\\ASM\\Assembler\\ASM85.ERR").Length > 1) {
-                        MessageBox.Show("Compile Error.");
+                    } else if(new FileInfo(ErrorFile).Length > 1) {
+                        asmNameLabel.Text = "Errors:\n"+File.ReadAllText(ErrorFile);
                         break;
                     }
                 }
@@ -193,17 +234,37 @@ namespace TpotSSL.GameComTools.GCHDK {
         }
 
         private void fullRomImage_MouseClick(object sender, MouseEventArgs e) {
-            double xMult = (double)fullRomImage.Width / CurrentROM.FullImage.Width;
-            double yMult = (double)fullRomImage.Height / CurrentROM.FullImage.Height;
+            double  xMult   = (double)fullRomImage.Width  / CurrentROM.FullImage.Width;
+            double  yMult   = (double)fullRomImage.Height / CurrentROM.FullImage.Height;
 
-            int index = (int)(Math.Floor(e.X/xMult/256) + Math.Floor(Math.Floor(e.Y/yMult/256d)*(CurrentROM.FullImage.Width/256d)));
+            int     index   = (int)(Math.Floor(e.X/xMult/256) + Math.Floor(Math.Floor(e.Y/yMult/256d)*(CurrentROM.FullImage.Width/256d)));
             SetBank(index);
         }
 
-        private void nameBox_TextChanged(object sender, EventArgs e) => CurrentROM.GameName = nameBox.Text.PadRight(9);
+        private void nameBox_TextChanged(object sender, EventArgs e)            => CurrentROM.GameName = nameBox.Text.PadRight(9);
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e) => Application.Exit();
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)    => Application.Exit();
 
-        private void gameIdBox_ValueChanged(object sender, EventArgs e) => CurrentROM.GameId = Convert.ToUInt16(gameIdBox.Text);
+        private void gameIdBox_ValueChanged(object sender, EventArgs e)         => CurrentROM.GameId = Convert.ToUInt16(gameIdBox.Text);
+
+        private void iconBankBox_ValueChanged(object sender, EventArgs e)       => gameIconBox.Image = CurrentROM.RefreshIcon((byte)iconBankBox.Value);
+        private void iconXBox_ValueChanged(object sender, EventArgs e)          => gameIconBox.Image = CurrentROM.RefreshIcon((byte)iconXBox.Value, CurrentROM.IconY);
+        private void iconYBox_ValueChanged(object sender, EventArgs e)          => gameIconBox.Image = CurrentROM.RefreshIcon(CurrentROM.IconX, (byte)iconYBox.Value);
+
+        private void assemblyFiles_SelectedIndexChanged(object sender, EventArgs e) {
+            openASMFileButton.Enabled = true;
+        }
+
+        private void loadASMRomButton_Click(object sender, EventArgs e) {
+            LoadRom($"{compileASMFileBox.Text}\\build.bin");
+        }
+
+        private void openASMFileButton_Click(object sender, EventArgs e) {
+            Process.Start(assemblyFiles.SelectedItem as string);
+        }
+
+        private void openASMFolderButton_Click(object sender, EventArgs e) {
+            Process.Start(compileASMFileBox.Text);
+        }
     }
 }
