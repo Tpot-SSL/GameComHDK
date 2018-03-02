@@ -1,0 +1,68 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameComImageConv", "GameComImageConv\GameComImageConv.csproj", "{15EB345A-D400-4F17-9F33-AFC744CDFF3D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{05EEECE7-7EDE-40E4-9B6B-3C29F58A60CA} = {05EEECE7-7EDE-40E4-9B6B-3C29F58A60CA}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TpotSSL.GameComTools", "TpotSSL.GameComTools\TpotSSL.GameComTools.csproj", "{05EEECE7-7EDE-40E4-9B6B-3C29F58A60CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameComImageRipper", "GameComImageRipper\GameComImageRipper.csproj", "{E83D3C4C-164A-404B-B739-D6F46AE40466}"
+	ProjectSection(ProjectDependencies) = postProject
+		{05EEECE7-7EDE-40E4-9B6B-3C29F58A60CA} = {05EEECE7-7EDE-40E4-9B6B-3C29F58A60CA}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TpotSSL.GameComTools.ApplyAlpha", "TpotSSL.GameComTools.ApplyAlpha\TpotSSL.GameComTools.ApplyAlpha.csproj", "{4354FD57-C59F-4ECC-BC46-BD08202360D3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{05EEECE7-7EDE-40E4-9B6B-3C29F58A60CA} = {05EEECE7-7EDE-40E4-9B6B-3C29F58A60CA}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FightersMegamixColorFix", "FightersMegamixColorFix\FightersMegamixColorFix.csproj", "{674F3F76-2F7F-41A1-8ADB-24C0017F8748}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GCHDK", "GCHDK\GCHDK.csproj", "{6A770C68-6D3F-41A1-A303-45B8FF14354A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E83D3C4C-164A-404B-B739-D6F46AE40466} = {E83D3C4C-164A-404B-B739-D6F46AE40466}
+		{4354FD57-C59F-4ECC-BC46-BD08202360D3} = {4354FD57-C59F-4ECC-BC46-BD08202360D3}
+		{15EB345A-D400-4F17-9F33-AFC744CDFF3D} = {15EB345A-D400-4F17-9F33-AFC744CDFF3D}
+		{674F3F76-2F7F-41A1-8ADB-24C0017F8748} = {674F3F76-2F7F-41A1-8ADB-24C0017F8748}
+		{05EEECE7-7EDE-40E4-9B6B-3C29F58A60CA} = {05EEECE7-7EDE-40E4-9B6B-3C29F58A60CA}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{15EB345A-D400-4F17-9F33-AFC744CDFF3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15EB345A-D400-4F17-9F33-AFC744CDFF3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15EB345A-D400-4F17-9F33-AFC744CDFF3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15EB345A-D400-4F17-9F33-AFC744CDFF3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05EEECE7-7EDE-40E4-9B6B-3C29F58A60CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05EEECE7-7EDE-40E4-9B6B-3C29F58A60CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05EEECE7-7EDE-40E4-9B6B-3C29F58A60CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05EEECE7-7EDE-40E4-9B6B-3C29F58A60CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E83D3C4C-164A-404B-B739-D6F46AE40466}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E83D3C4C-164A-404B-B739-D6F46AE40466}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E83D3C4C-164A-404B-B739-D6F46AE40466}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E83D3C4C-164A-404B-B739-D6F46AE40466}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4354FD57-C59F-4ECC-BC46-BD08202360D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4354FD57-C59F-4ECC-BC46-BD08202360D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4354FD57-C59F-4ECC-BC46-BD08202360D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4354FD57-C59F-4ECC-BC46-BD08202360D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{674F3F76-2F7F-41A1-8ADB-24C0017F8748}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{674F3F76-2F7F-41A1-8ADB-24C0017F8748}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{674F3F76-2F7F-41A1-8ADB-24C0017F8748}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{674F3F76-2F7F-41A1-8ADB-24C0017F8748}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A770C68-6D3F-41A1-A303-45B8FF14354A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A770C68-6D3F-41A1-A303-45B8FF14354A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A770C68-6D3F-41A1-A303-45B8FF14354A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A770C68-6D3F-41A1-A303-45B8FF14354A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
