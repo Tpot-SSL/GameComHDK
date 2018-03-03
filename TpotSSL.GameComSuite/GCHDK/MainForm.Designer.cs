@@ -51,6 +51,20 @@
             this.nameBox = new System.Windows.Forms.TextBox();
             this.gameIconBox = new System.Windows.Forms.PictureBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.radioButton4 = new System.Windows.Forms.RadioButton();
+            this.radioButton3 = new System.Windows.Forms.RadioButton();
+            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.label9 = new System.Windows.Forms.Label();
+            this.newProjectName = new System.Windows.Forms.TextBox();
+            this.createProjectButton = new System.Windows.Forms.Button();
+            this.loadASMRomButton = new System.Windows.Forms.Button();
+            this.openASMFileButton = new System.Windows.Forms.Button();
+            this.openASMFolderButton = new System.Windows.Forms.Button();
+            this.asmNameLabel = new System.Windows.Forms.Label();
+            this.assemblyFiles = new System.Windows.Forms.ListBox();
             this.compileASMButton = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
             this.asmFileButton = new System.Windows.Forms.Button();
@@ -70,12 +84,7 @@
             this.loadBankBinDialog = new System.Windows.Forms.OpenFileDialog();
             this.openASMFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveRomDialog = new System.Windows.Forms.SaveFileDialog();
-            this.assemblyFiles = new System.Windows.Forms.ListBox();
-            this.asmNameLabel = new System.Windows.Forms.Label();
             this.asmFolderDialog = new System.Windows.Forms.FolderBrowserDialog();
-            this.openASMFolderButton = new System.Windows.Forms.Button();
-            this.openASMFileButton = new System.Windows.Forms.Button();
-            this.loadASMRomButton = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gameIdBox)).BeginInit();
@@ -87,6 +96,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.bankImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gameIconBox)).BeginInit();
             this.tabPage2.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -422,6 +433,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.groupBox1);
             this.tabPage2.Controls.Add(this.loadASMRomButton);
             this.tabPage2.Controls.Add(this.openASMFileButton);
             this.tabPage2.Controls.Add(this.openASMFolderButton);
@@ -437,6 +449,158 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Assembler";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.groupBox2);
+            this.groupBox1.Controls.Add(this.label9);
+            this.groupBox1.Controls.Add(this.newProjectName);
+            this.groupBox1.Controls.Add(this.createProjectButton);
+            this.groupBox1.Location = new System.Drawing.Point(445, 25);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(434, 200);
+            this.groupBox1.TabIndex = 10;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Project Creation";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.radioButton4);
+            this.groupBox2.Controls.Add(this.radioButton3);
+            this.groupBox2.Controls.Add(this.radioButton2);
+            this.groupBox2.Controls.Add(this.radioButton1);
+            this.groupBox2.Enabled = false;
+            this.groupBox2.Location = new System.Drawing.Point(6, 47);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(173, 84);
+            this.groupBox2.TabIndex = 13;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "ROM Size";
+            this.groupBox2.Visible = false;
+            // 
+            // radioButton4
+            // 
+            this.radioButton4.AutoSize = true;
+            this.radioButton4.Location = new System.Drawing.Point(6, 19);
+            this.radioButton4.Name = "radioButton4";
+            this.radioButton4.Size = new System.Drawing.Size(60, 17);
+            this.radioButton4.TabIndex = 15;
+            this.radioButton4.TabStop = true;
+            this.radioButton4.Text = "256 KB";
+            this.radioButton4.UseVisualStyleBackColor = true;
+            // 
+            // radioButton3
+            // 
+            this.radioButton3.AutoSize = true;
+            this.radioButton3.Location = new System.Drawing.Point(78, 42);
+            this.radioButton3.Name = "radioButton3";
+            this.radioButton3.Size = new System.Drawing.Size(66, 17);
+            this.radioButton3.TabIndex = 14;
+            this.radioButton3.TabStop = true;
+            this.radioButton3.Text = "2048 KB";
+            this.radioButton3.UseVisualStyleBackColor = true;
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.Location = new System.Drawing.Point(78, 19);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(66, 17);
+            this.radioButton2.TabIndex = 13;
+            this.radioButton2.TabStop = true;
+            this.radioButton2.Text = "1024 KB";
+            this.radioButton2.UseVisualStyleBackColor = true;
+            // 
+            // radioButton1
+            // 
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.Location = new System.Drawing.Point(6, 42);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(60, 17);
+            this.radioButton1.TabIndex = 12;
+            this.radioButton1.TabStop = true;
+            this.radioButton1.Text = "512 KB";
+            this.radioButton1.UseVisualStyleBackColor = true;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(110, 24);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(35, 13);
+            this.label9.TabIndex = 11;
+            this.label9.Text = "Name";
+            // 
+            // newProjectName
+            // 
+            this.newProjectName.Location = new System.Drawing.Point(151, 20);
+            this.newProjectName.MaxLength = 9;
+            this.newProjectName.Name = "newProjectName";
+            this.newProjectName.Size = new System.Drawing.Size(129, 20);
+            this.newProjectName.TabIndex = 10;
+            this.newProjectName.TextChanged += new System.EventHandler(this.newProjectName_TextChanged);
+            // 
+            // createProjectButton
+            // 
+            this.createProjectButton.Enabled = false;
+            this.createProjectButton.Location = new System.Drawing.Point(6, 19);
+            this.createProjectButton.Name = "createProjectButton";
+            this.createProjectButton.Size = new System.Drawing.Size(98, 22);
+            this.createProjectButton.TabIndex = 9;
+            this.createProjectButton.Text = "Create Project";
+            this.createProjectButton.UseVisualStyleBackColor = true;
+            this.createProjectButton.Click += new System.EventHandler(this.createProjectButton_Click);
+            // 
+            // loadASMRomButton
+            // 
+            this.loadASMRomButton.Enabled = false;
+            this.loadASMRomButton.Location = new System.Drawing.Point(228, 231);
+            this.loadASMRomButton.Name = "loadASMRomButton";
+            this.loadASMRomButton.Size = new System.Drawing.Size(75, 23);
+            this.loadASMRomButton.TabIndex = 8;
+            this.loadASMRomButton.Text = "Load ROM";
+            this.loadASMRomButton.UseVisualStyleBackColor = true;
+            this.loadASMRomButton.Click += new System.EventHandler(this.loadASMRomButton_Click);
+            // 
+            // openASMFileButton
+            // 
+            this.openASMFileButton.Enabled = false;
+            this.openASMFileButton.Location = new System.Drawing.Point(309, 53);
+            this.openASMFileButton.Name = "openASMFileButton";
+            this.openASMFileButton.Size = new System.Drawing.Size(75, 23);
+            this.openASMFileButton.TabIndex = 7;
+            this.openASMFileButton.Text = "Open File";
+            this.openASMFileButton.UseVisualStyleBackColor = true;
+            this.openASMFileButton.Click += new System.EventHandler(this.openASMFileButton_Click);
+            // 
+            // openASMFolderButton
+            // 
+            this.openASMFolderButton.Enabled = false;
+            this.openASMFolderButton.Location = new System.Drawing.Point(347, 25);
+            this.openASMFolderButton.Name = "openASMFolderButton";
+            this.openASMFolderButton.Size = new System.Drawing.Size(92, 22);
+            this.openASMFolderButton.TabIndex = 6;
+            this.openASMFolderButton.Text = "Open Folder";
+            this.openASMFolderButton.UseVisualStyleBackColor = true;
+            this.openASMFolderButton.Click += new System.EventHandler(this.openASMFolderButton_Click);
+            // 
+            // asmNameLabel
+            // 
+            this.asmNameLabel.AutoSize = true;
+            this.asmNameLabel.Location = new System.Drawing.Point(5, 257);
+            this.asmNameLabel.Name = "asmNameLabel";
+            this.asmNameLabel.Size = new System.Drawing.Size(37, 13);
+            this.asmNameLabel.TabIndex = 5;
+            this.asmNameLabel.Text = "Errors:";
+            // 
+            // assemblyFiles
+            // 
+            this.assemblyFiles.FormattingEnabled = true;
+            this.assemblyFiles.Location = new System.Drawing.Point(6, 52);
+            this.assemblyFiles.Name = "assemblyFiles";
+            this.assemblyFiles.Size = new System.Drawing.Size(297, 173);
+            this.assemblyFiles.TabIndex = 4;
+            this.assemblyFiles.SelectedIndexChanged += new System.EventHandler(this.assemblyFiles_SelectedIndexChanged);
             // 
             // compileASMButton
             // 
@@ -475,6 +639,7 @@
             this.compileASMFileBox.Name = "compileASMFileBox";
             this.compileASMFileBox.Size = new System.Drawing.Size(297, 20);
             this.compileASMFileBox.TabIndex = 0;
+            this.compileASMFileBox.TextChanged += new System.EventHandler(this.compileASMFileBox_TextChanged);
             // 
             // toolStrip1
             // 
@@ -584,60 +749,9 @@
             this.saveRomDialog.FileName = "gcbuild0.bin";
             this.saveRomDialog.Filter = "Game.Com Roms|*.bin";
             // 
-            // assemblyFiles
-            // 
-            this.assemblyFiles.FormattingEnabled = true;
-            this.assemblyFiles.Location = new System.Drawing.Point(6, 52);
-            this.assemblyFiles.Name = "assemblyFiles";
-            this.assemblyFiles.Size = new System.Drawing.Size(297, 173);
-            this.assemblyFiles.TabIndex = 4;
-            this.assemblyFiles.SelectedIndexChanged += new System.EventHandler(this.assemblyFiles_SelectedIndexChanged);
-            // 
-            // asmNameLabel
-            // 
-            this.asmNameLabel.AutoSize = true;
-            this.asmNameLabel.Location = new System.Drawing.Point(5, 257);
-            this.asmNameLabel.Name = "asmNameLabel";
-            this.asmNameLabel.Size = new System.Drawing.Size(37, 13);
-            this.asmNameLabel.TabIndex = 5;
-            this.asmNameLabel.Text = "Errors:";
-            // 
             // asmFolderDialog
             // 
             this.asmFolderDialog.RootFolder = System.Environment.SpecialFolder.MyComputer;
-            // 
-            // openASMFolderButton
-            // 
-            this.openASMFolderButton.Enabled = false;
-            this.openASMFolderButton.Location = new System.Drawing.Point(347, 25);
-            this.openASMFolderButton.Name = "openASMFolderButton";
-            this.openASMFolderButton.Size = new System.Drawing.Size(92, 22);
-            this.openASMFolderButton.TabIndex = 6;
-            this.openASMFolderButton.Text = "Open Folder";
-            this.openASMFolderButton.UseVisualStyleBackColor = true;
-            this.openASMFolderButton.Click += new System.EventHandler(this.openASMFolderButton_Click);
-            // 
-            // openASMFileButton
-            // 
-            this.openASMFileButton.Enabled = false;
-            this.openASMFileButton.Location = new System.Drawing.Point(309, 53);
-            this.openASMFileButton.Name = "openASMFileButton";
-            this.openASMFileButton.Size = new System.Drawing.Size(75, 23);
-            this.openASMFileButton.TabIndex = 7;
-            this.openASMFileButton.Text = "Open File";
-            this.openASMFileButton.UseVisualStyleBackColor = true;
-            this.openASMFileButton.Click += new System.EventHandler(this.openASMFileButton_Click);
-            // 
-            // loadASMRomButton
-            // 
-            this.loadASMRomButton.Enabled = false;
-            this.loadASMRomButton.Location = new System.Drawing.Point(228, 231);
-            this.loadASMRomButton.Name = "loadASMRomButton";
-            this.loadASMRomButton.Size = new System.Drawing.Size(75, 23);
-            this.loadASMRomButton.TabIndex = 8;
-            this.loadASMRomButton.Text = "Load ROM";
-            this.loadASMRomButton.UseVisualStyleBackColor = true;
-            this.loadASMRomButton.Click += new System.EventHandler(this.loadASMRomButton_Click);
             // 
             // MainForm
             // 
@@ -648,6 +762,7 @@
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.loadRomButton);
             this.Controls.Add(this.tabControl1);
+            this.Icon = global::TpotSSL.GameComTools.GCHDK.Properties.Resources.GamecomHDK;
             this.Name = "MainForm";
             this.Text = "Game.com Homebrew Development Kit";
             this.tabControl1.ResumeLayout(false);
@@ -663,6 +778,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.gameIconBox)).EndInit();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -724,6 +843,15 @@
         private System.Windows.Forms.Button loadASMRomButton;
         private System.Windows.Forms.Button openASMFileButton;
         private System.Windows.Forms.Button openASMFolderButton;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox newProjectName;
+        private System.Windows.Forms.Button createProjectButton;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.RadioButton radioButton4;
+        private System.Windows.Forms.RadioButton radioButton3;
+        private System.Windows.Forms.RadioButton radioButton2;
+        private System.Windows.Forms.RadioButton radioButton1;
     }
 }
 

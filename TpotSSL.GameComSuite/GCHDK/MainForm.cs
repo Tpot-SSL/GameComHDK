@@ -17,6 +17,7 @@ namespace TpotSSL.GameComTools.GCHDK {
 
         public static readonly string DOSFolder     = Environment.CurrentDirectory + "\\ASM";
         public static readonly string ASMFolder     = $"{DOSFolder}\\Assembler";
+        public static readonly string NewFolder     = $"{DOSFolder}\\project";
         public static readonly string SourceFolder  = $"{ASMFolder}\\source";
         public static readonly string ErrorFile     = $"{ASMFolder}\\ASM85.ERR";
         public static readonly byte[] BuildData     = File.ReadAllBytes($"{ASMFolder}\\data.bin");
@@ -153,11 +154,7 @@ namespace TpotSSL.GameComTools.GCHDK {
                 return;
 
             compileASMFileBox.Text      = asmFolderDialog.SelectedPath;
-            loadASMRomButton.Enabled    = false;
-            openASMFileButton.Enabled   = false;
-            compileASMButton.Enabled    = true;
-            openASMFolderButton.Enabled = true;
-            assemblyFiles.Items.AddRange(Directory.GetFiles(compileASMFileBox.Text));
+        
         }
 
         private void compileASMButton_Click(object sender, EventArgs e){
@@ -219,7 +216,11 @@ namespace TpotSSL.GameComTools.GCHDK {
                         loadASMRomButton.Enabled    = true;
                         break;
                     } else if(new FileInfo(ErrorFile).Length > 1) {
-                        asmNameLabel.Text = "Errors:\n"+File.ReadAllText(ErrorFile);
+                        try {
+                            asmNameLabel.Text = "Errors:\n" + File.ReadAllText(ErrorFile);
+                        }catch {
+                            continue;
+                        }
                         break;
                     }
                 }
@@ -241,30 +242,57 @@ namespace TpotSSL.GameComTools.GCHDK {
             SetBank(index);
         }
 
-        private void nameBox_TextChanged(object sender, EventArgs e)            => CurrentROM.GameName = nameBox.Text.PadRight(9);
+        private void nameBox_TextChanged(object sender, EventArgs e)                    => CurrentROM.GameName = nameBox.Text.PadRight(9);
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)    => Application.Exit();
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)            => Application.Exit();
 
-        private void gameIdBox_ValueChanged(object sender, EventArgs e)         => CurrentROM.GameId = Convert.ToUInt16(gameIdBox.Text);
+        private void gameIdBox_ValueChanged(object sender, EventArgs e)                 => CurrentROM.GameId = Convert.ToUInt16(gameIdBox.Text);
+        private void iconBankBox_ValueChanged(object sender, EventArgs e)               => gameIconBox.Image = CurrentROM.RefreshIcon((byte)iconBankBox.Value);
+        private void iconXBox_ValueChanged(object sender, EventArgs e)                  => gameIconBox.Image = CurrentROM.RefreshIcon((byte)iconXBox.Value, CurrentROM.IconY);
+        private void iconYBox_ValueChanged(object sender, EventArgs e)                  => gameIconBox.Image = CurrentROM.RefreshIcon(CurrentROM.IconX, (byte)iconYBox.Value);
 
-        private void iconBankBox_ValueChanged(object sender, EventArgs e)       => gameIconBox.Image = CurrentROM.RefreshIcon((byte)iconBankBox.Value);
-        private void iconXBox_ValueChanged(object sender, EventArgs e)          => gameIconBox.Image = CurrentROM.RefreshIcon((byte)iconXBox.Value, CurrentROM.IconY);
-        private void iconYBox_ValueChanged(object sender, EventArgs e)          => gameIconBox.Image = CurrentROM.RefreshIcon(CurrentROM.IconX, (byte)iconYBox.Value);
+        private void assemblyFiles_SelectedIndexChanged(object sender, EventArgs e)     => openASMFileButton.Enabled = true;
 
-        private void assemblyFiles_SelectedIndexChanged(object sender, EventArgs e) {
-            openASMFileButton.Enabled = true;
+        private void loadASMRomButton_Click(object sender, EventArgs e)                 => LoadRom($"{compileASMFileBox.Text}\\build.bin");
+        private void openASMFileButton_Click(object sender, EventArgs e)                => Process.Start(assemblyFiles.SelectedItem as string);
+        private void openASMFolderButton_Click(object sender, EventArgs e)              => Process.Start(compileASMFileBox.Text);
+        private void newProjectName_TextChanged(object sender, EventArgs e)             => createProjectButton.Enabled = newProjectName.TextLength == 9;
+
+        private void createProjectButton_Click(object sender, EventArgs e) {
+            if(asmFolderDialog.ShowDialog() != DialogResult.OK)
+                return;
+
+            string[] files = Directory.GetFiles(NewFolder, "*.*", SearchOption.TopDirectoryOnly);
+            bool warning = true;
+            for(int i = 0; i < files.Length; ++i) {
+                string filename = asmFolderDialog.SelectedPath + "\\" + Path.GetFileName(files[i]);
+                if(File.Exists(filename)) {
+                    if(warning) {
+                        if(MessageBox.Show("One or more files already exists in the directory.\r\n" +
+                          "Creating the project here will replace the existing files.\r\n" +
+                          "Are you sure you'd like to continue?", "Replace directory files?", MessageBoxButtons.YesNo) == DialogResult.No)
+                            return;
+
+                        warning = false;
+                    }
+
+                    File.Delete(filename);
+                }
+                File.Copy(files[i], filename);
+            }
+
+            Directory.CreateDirectory(asmFolderDialog.SelectedPath + "\\gfx");
+
+            compileASMFileBox.Text = asmFolderDialog.SelectedPath;
         }
 
-        private void loadASMRomButton_Click(object sender, EventArgs e) {
-            LoadRom($"{compileASMFileBox.Text}\\build.bin");
-        }
-
-        private void openASMFileButton_Click(object sender, EventArgs e) {
-            Process.Start(assemblyFiles.SelectedItem as string);
-        }
-
-        private void openASMFolderButton_Click(object sender, EventArgs e) {
-            Process.Start(compileASMFileBox.Text);
+        private void compileASMFileBox_TextChanged(object sender, EventArgs e) {
+            loadASMRomButton.Enabled    = false;
+            openASMFileButton.Enabled   = false;
+            compileASMButton.Enabled    = Directory.Exists(compileASMFileBox.Text);
+            openASMFolderButton.Enabled = Directory.Exists(compileASMFileBox.Text);
+            assemblyFiles.Items.Clear();
+            assemblyFiles.Items.AddRange(Directory.GetFiles(compileASMFileBox.Text));
         }
     }
 }
