@@ -7,8 +7,6 @@ using System.Text;
 using System.IO;
 
 namespace TpotSSL.GameComTools {
-  
-
     public class GameComImage :IDisposable{
         public byte[]       RawBytes;
         public Bitmap       Bitmap;
@@ -169,7 +167,7 @@ namespace TpotSSL.GameComTools {
 
             Width                   = image.Width;
             Height                  = image.Height;
-            BitmapData imageData    = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadWrite, image.PixelFormat);
+            BitmapData imageData    = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
             byte[] bytes = new byte[(Width*Height)/4];
             unsafe{
                 int i = 0;

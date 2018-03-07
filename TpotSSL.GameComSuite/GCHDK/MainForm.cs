@@ -15,16 +15,28 @@ namespace TpotSSL.GameComTools.GCHDK {
         public GameComRom CurrentROM;
         public int CurrentBankIndex;
 
-        public static readonly string DOSFolder     = Environment.CurrentDirectory + "\\ASM";
-        public static readonly string ASMFolder     = $"{DOSFolder}\\Assembler";
-        public static readonly string NewFolder     = $"{DOSFolder}\\project";
-        public static readonly string SourceFolder  = $"{ASMFolder}\\source";
-        public static readonly string ErrorFile     = $"{ASMFolder}\\ASM85.ERR";
-        public static readonly byte[] BuildData     = File.ReadAllBytes($"{ASMFolder}\\data.bin");
+        public static readonly string DOSFolder         = Environment.CurrentDirectory + "\\ASM";
+        public static readonly string ASMFolder         = $"{DOSFolder}\\Assembler";
+        public static readonly string NewFolder         = $"{DOSFolder}\\project";
+        public static readonly string SourceFolder      = $"{ASMFolder}\\source";
+        public static readonly string ErrorFile         = $"{ASMFolder}\\ASM85.ERR";
+        public static readonly byte[] BuildData         = File.ReadAllBytes($"{ASMFolder}\\data.bin");
+        public static          string EmulatorLocation  = "";
         public GameComBank CurrentBank => CurrentROM.MemoryBanks[CurrentBankIndex];
 
-        public MainForm() => InitializeComponent();
-
+        public MainForm() {
+            InitializeComponent();
+            EmulatorLocation = Properties.Settings.Default.EmulatorLocation;
+            if(string.IsNullOrEmpty(EmulatorLocation) == false) {
+                if(!File.Exists(EmulatorLocation + "\\GAMECOM.EXE")) {
+                    MessageBox.Show("Emulator EXE missing from set location!");
+                    Properties.Settings.Default.EmulatorLocation = null;
+                    Properties.Settings.Default.Save();
+                    return;
+                }
+                runToolStripMenuItem.Enabled = true;
+            }
+        }
         private void loadRomButton_Click(object sender, EventArgs e) {
             if(loadRomDialog.ShowDialog() != DialogResult.OK)
                 return;
@@ -154,7 +166,26 @@ namespace TpotSSL.GameComTools.GCHDK {
                 return;
 
             compileASMFileBox.Text      = asmFolderDialog.SelectedPath;
-        
+        }
+
+        private int GetFilenameId(string str) {
+            if(int.TryParse(str, out int initialResult))
+                return initialResult;
+
+            int start   = -1;
+            int end     = 0;
+            for(end = 0; end < str.Length; ++end) {
+                bool dig = char.IsDigit(str[end]);
+                if(start < 0 && dig)
+                    start = end;
+                else if(start >= 0 && !dig) 
+                    break;
+            }
+
+            if(end > 0 && int.TryParse(str.Substring(start, end - start), out int result)) 
+                return result;
+
+            return -1;
         }
 
         private void compileASMButton_Click(object sender, EventArgs e){
@@ -174,16 +205,18 @@ namespace TpotSSL.GameComTools.GCHDK {
                 File.Copy(files[i], SourceFolder+"\\"+Path.GetFileName(files[i]));
 
             if(Directory.Exists(compileASMFileBox.Text + "\\gfx")) {
-                files = Directory.GetFiles(compileASMFileBox.Text + "\\gfx", "*.bin", SearchOption.TopDirectoryOnly);
+                files = Directory.GetFiles(compileASMFileBox.Text + "\\gfx");
                 for(int i = 0; i < files.Length; ++i) {
+                    string ext = Path.GetExtension(files[i]).ToLower();
+                    if(ext != ".bmp" && ext != ".gif" && ext != ".png" && ext != ".bin")
+                        continue;
+
                     string path     = Path.GetFileNameWithoutExtension(files[i]);
-                    int num         = path.StartsWith("bank") ? int.Parse(path.Substring(4)) : int.Parse(path);
-                    images.Add(num, GameComImage.FromFile(files[i]));
-                }
-                files = Directory.GetFiles(compileASMFileBox.Text + "\\gfx", "*.png", SearchOption.TopDirectoryOnly);
-                for(int i = 0; i < files.Length; ++i) {
-                    string path     = Path.GetFileNameWithoutExtension(files[i]);
-                    int num         = path.StartsWith("bank") ? int.Parse(path.Substring(4)) : int.Parse(path);
+
+                    int num         = GetFilenameId(path);
+                    if(num < 0)
+                        continue;
+
                     images.Add(num, GameComImage.FromFile(files[i]));
                 }
             }
@@ -293,6 +326,53 @@ namespace TpotSSL.GameComTools.GCHDK {
             openASMFolderButton.Enabled = Directory.Exists(compileASMFileBox.Text);
             assemblyFiles.Items.Clear();
             assemblyFiles.Items.AddRange(Directory.GetFiles(compileASMFileBox.Text));
+        }
+
+        private void setupLocationToolStripMenuItem_Click(object sender, EventArgs e) {
+            FolderBrowserDialog folderBrowser = new FolderBrowserDialog();
+            if(folderBrowser.ShowDialog() != DialogResult.OK)
+                return;
+
+            if(!File.Exists(folderBrowser.SelectedPath + "\\GAMECOM.EXE")) {
+                MessageBox.Show("Emulator EXE missing from set location!");
+                return;
+            }
+
+            Properties.Settings.Default.EmulatorLocation = folderBrowser.SelectedPath;
+            EmulatorLocation                             = folderBrowser.SelectedPath;
+            Properties.Settings.Default.Save();
+            runToolStripMenuItem.Enabled = true;
+
+            MessageBox.Show("Location saved!");
+        }
+
+        private void downloadToolStripMenuItem_Click(object sender, EventArgs e) {
+            Process.Start("https://www.dropbox.com/s/2zuhwl8g27m0u4l/GameComDebugger.zip");
+        }
+
+        private void wikiToolStripMenuItem_Click(object sender, EventArgs e) {
+            Process.Start("https://github.com/Tpot-SSL/GameComHDK/wiki");
+        }
+
+        private void runToolStripMenuItem_Click(object sender, EventArgs e) {
+            if(CurrentROM != null) {
+                File.Delete(EmulatorLocation + "\\" + CurrentROM.GameName + "-HDK.bin");
+                CurrentROM.SaveBinary(EmulatorLocation + "\\" + CurrentROM.GameName + "-HDK.bin");
+            }
+            ProcessStartInfo startInfo = new ProcessStartInfo() {
+                UseShellExecute = true,
+                FileName = EmulatorLocation + "\\GAMECOM.EXE",
+                WorkingDirectory = EmulatorLocation
+            };
+            Process.Start(startInfo);
+        }
+
+        private void githubToolStripMenuItem_Click(object sender, EventArgs e) {
+            Process.Start("https://github.com/Tpot-SSL/GameComHDK");
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e) {
+            MessageBox.Show("Game.com HDK v0.4-BETA-3. Developed by Tpot-SSL, with help from TheStoneBanana.");
         }
     }
 }
