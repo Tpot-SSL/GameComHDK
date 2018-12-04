@@ -14,10 +14,10 @@ namespace TpotSSL.GameComTools {
         public int          Height          = 256;
         public static int   DefaultFileSize = 16384;
 
-        public static Color White       => Color.FromArgb(255, 255, 255);
-        public static Color Gray        => Color.FromArgb(192, 192, 192);
-        public static Color DarkGray    => Color.FromArgb(128, 128, 128);
-        public static Color Black       => Color.FromArgb(0, 0, 0);
+        public static readonly Color White       = Color.FromArgb(255, 255, 255);
+        public static readonly Color Gray        = Color.FromArgb(192, 192, 192);
+        public static readonly Color DarkGray    = Color.FromArgb(128, 128, 128);
+        public static readonly Color Black       = Color.FromArgb(0, 0, 0);
 
         public static Color GetCompatibleColor(Color color){
             int b = (int)Math.Round(color.GetBrightness()*255);
@@ -31,6 +31,9 @@ namespace TpotSSL.GameComTools {
             return White;
         }
 
+        /// <summary>
+        /// Default Game.com Color Palette
+        /// </summary>
         public static List<Color> Palette = new List<Color>{White, Gray, DarkGray, Black};
 
         public static bool GetBit(byte b, byte bitIndex)                    => (b & (1 << bitIndex)) != 0;
@@ -59,7 +62,11 @@ namespace TpotSSL.GameComTools {
             }
             return bitmap;
         }
-
+        /// <summary>
+        /// Fighters Megamix Color Fix
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="game"></param>
         public static void FixColor(string filename, GameComGame game){
             Color sColor = DarkGray;
             Color dColor = White;
@@ -77,9 +84,9 @@ namespace TpotSSL.GameComTools {
                         Color   c = GetCompatibleColor(Color.FromArgb(b1, b1, b1));
 
                         if(c == sColor){
-                            row[(x)*4]      = dColor.R;
-                            row[(x)*4 + 1]  = dColor.R;
-                            row[(x)*4 + 2]  = dColor.R;
+                            row[x*4]      = dColor.R;
+                            row[x*4 + 1]  = dColor.R;
+                            row[x*4 + 2]  = dColor.R;
                         }
 
                         i++;

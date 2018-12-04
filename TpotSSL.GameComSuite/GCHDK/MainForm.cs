@@ -140,7 +140,7 @@ namespace TpotSSL.GameComTools.GCHDK {
                 return;
 
             CurrentBank.Image       = GameComImage.FromFile(loadBankImageDialog.FileName, false);
-            CurrentROM.ReplaceBank(CurrentBankIndex, CurrentBank.Image.RawBytes, CurrentBank.Image.Bitmap);
+            CurrentROM.ReplaceBank(CurrentBankIndex, CurrentBank.Image);
             fullRomImage.Image      = CurrentROM.FullImage.Bitmap;
             bankImage.Image         = CurrentROM.MemoryBanks[CurrentBankIndex].Image.Bitmap;
 
@@ -153,7 +153,7 @@ namespace TpotSSL.GameComTools.GCHDK {
                 return;
 
             CurrentBank.Image       = GameComImage.FromFile(loadBankBinDialog.FileName, false);
-            CurrentROM.ReplaceBank(CurrentBankIndex, CurrentBank.Image.RawBytes, CurrentBank.Image.Bitmap);
+            CurrentROM.ReplaceBank(CurrentBankIndex, CurrentBank.Image);
             fullRomImage.Image      = CurrentROM.FullImage.Bitmap;
             bankImage.Image         = CurrentROM.MemoryBanks[CurrentBankIndex].Image.Bitmap;
 

@@ -31,28 +31,49 @@ namespace TpotSSL.GameComTools {
   
     public class GameComRom : IDisposable {
         public int                  HeaderStartIndex = -1;
-        public string               Filename;
+        public string               FilePath;
 
+        /// <summary>
+        /// Name specified in the header.
+        /// </summary>
         public string               GameName;
         public ushort               GameId;
 
+        /// <summary>
+        /// The entire ROM has a game.com image.
+        /// </summary>
         public GameComImage         FullImage;
 
+        /// <summary>
+        /// Game Icon X Coordinates
+        /// </summary>
         public byte                 IconX;
+
+        /// <summary>
+        /// Game Icon Y Coordinates
+        /// </summary>
         public byte                 IconY;
+
+        /// <summary>
+        /// Game Icon Bank Index
+        /// </summary>
         public byte                 IconBankNo;
 
-        public bool                 ValidRom;
-
+        /// <summary>
+        /// Does the rom have a valid header.
+        /// </summary>
+        public bool                 IsValidRom;
+        /// <summary>
+        /// Game Icon as Image
+        /// </summary>
         public Bitmap               GameIcon;
 
         public List<GameComBank>    MemoryBanks;
 
-
         public          int         SizeInBytes     => RawBytes.Length;
         public          byte[]      RawBytes        => FullImage.RawBytes;
 
-        public static   string      TigerId         => "TigerDMGC";
+        public const    string      TigerId         = "TigerDMGC";
 
         public static Dictionary<ushort, GameComGame> KnownGamesById = new Dictionary<ushort, GameComGame>(){
             {36646, GameComGame.FightersMegamix },  {37682, GameComGame.SonicJam },     {38680, GameComGame.Frogger },
@@ -111,49 +132,73 @@ namespace TpotSSL.GameComTools {
             }
         }
 
+        /// <summary>
+        /// Get known game name from index id.
+        /// </summary>
+        /// <param name="game">Game ID</param>
+        /// <returns>Game Name</returns>
         public static string GetGameName(ushort game) => KnownGamesById.ContainsKey(game) ? GetGameName(KnownGamesById[game]) : "Unknown  ";
 
+        /// <summary>
+        /// Update the rom's raw bytes to match the current header info.
+        /// Keep note that this does not write to any files.
+        /// </summary>
         public void UpdateHeader() {
+            // Header couldn't be found, so it can't be updated.
             if(HeaderStartIndex < 0)
                 return;
 
             int index = HeaderStartIndex;
 
+            // Update the bytes.
             FullImage.RawBytes[index]       = IconBankNo;
             FullImage.RawBytes[index + 1]   = IconX;
             FullImage.RawBytes[index + 2]   = IconY;
 
+            // Convert the rom name into ascii bytes and apply to the array.
             byte[] nameBytes = Encoding.ASCII.GetBytes(GameName);
 
             for(int i = 0; i < 9; i++)
                 FullImage.RawBytes[index+3+i] = nameBytes[i];
         }
-
-        public void SaveBinary(string filename){
+        /// <summary>
+        /// Save rom as binary file.
+        /// </summary>
+        /// <param name="filepath"></param>
+        public void SaveBinary(string filepath){
             UpdateHeader();
-            FullImage.SaveBinary(filename);
+            FullImage.SaveBinary(filepath);
         }
 
-        public void SaveBinary() {
-            UpdateHeader();
-            FullImage.SaveBinary(Filename);
-        }
+        /// <summary>
+        /// Overwrite rom binary with current data.
+        /// </summary>
+        public void SaveBinary() => SaveBinary(FilePath);
 
-        public void ReplaceBank(int bankIndex, byte[] bytes, Bitmap image){
+        /// <summary>
+        /// Replace one of the banks with a new Image.
+        /// </summary>
+        /// <param name="bankIndex"></param>
+        /// <param name="image"></param>
+        public void ReplaceBank(int bankIndex, GameComImage image){
             GameComBank bank = MemoryBanks[bankIndex];
             using(Graphics g = Graphics.FromImage(FullImage.Bitmap))
-                g.DrawImage(image, bank.X, bank.Y);
+                g.DrawImage(image.Bitmap, bank.X, bank.Y);
             
-            for(int i = 0; i < bytes.Length; i++)
-                FullImage.RawBytes[bank.ByteStart + i] = bytes[i];
+            for(int i = 0; i < image.RawBytes.Length; i++)
+                FullImage.RawBytes[bank.ByteStart + i] = image.RawBytes[i];
         }
 
-        public GameComRom(string filename){
-            FullImage       = new GameComImage(File.ReadAllBytes(filename));
+        /// <summary>
+        /// Create rom object from file.
+        /// </summary>
+        /// <param name="filePath"></param>
+        public GameComRom(string filePath){
+            FullImage       = new GameComImage(File.ReadAllBytes(filePath));
             MemoryBanks     = GameComImage.SplitBanks(FullImage);
 
             GrabHeaderData(SearchForHeader());
-            Filename = filename;
+            FilePath = filePath;
         }
 
         public Bitmap RefreshIcon(byte x, byte y) {
@@ -177,6 +222,10 @@ namespace TpotSSL.GameComTools {
             return RefreshIcon();
         }
 
+        /// <summary>
+        /// Refresh icon image with current header info.
+        /// </summary>
+        /// <returns></returns>
         public Bitmap RefreshIcon() {
             if(IconBankNo >= MemoryBanks.Count)
                 return new Bitmap(64, 64);
@@ -184,11 +233,15 @@ namespace TpotSSL.GameComTools {
             return GameIcon = MemoryBanks[IconBankNo].Image.Bitmap.Clone(new Rectangle(IconX, IconY, 64, 64), PixelFormat.Format32bppArgb);
         }
 
+        /// <summary>
+        /// Fill this instance's variables with the header data.
+        /// </summary>
+        /// <param name="index"></param>
         public void GrabHeaderData(int index){
             if(index < 0)
                 return;
 
-            IconBankNo  = (RawBytes[index]);
+            IconBankNo  = RawBytes[index];
             IconX       = RawBytes[index + 1];
             IconY       = RawBytes[index + 2];
 
@@ -197,20 +250,21 @@ namespace TpotSSL.GameComTools {
             RefreshIcon();
             GameId              = BitConverter.ToUInt16(RawBytes, index + 13);
 
-            ValidRom            = true;
+            IsValidRom            = true;
             HeaderStartIndex    = index;
         }
 
+        /// <summary>
+        /// Find ROM Header data and return the location.
+        /// </summary>
+        /// <returns>Location of header.</returns>
         public int SearchForHeader(){
             string tigerId = Encoding.ASCII.GetString(RawBytes, 5, 9);
             if(tigerId == TigerId)
                 return 14;
 
             tigerId = Encoding.ASCII.GetString(RawBytes, 0x40005, 9);
-            if(tigerId == TigerId)
-                return 0x4000E;
-
-            return -1;
+            return tigerId == TigerId ? 0x4000E : -1;
         }
 
         public void Dispose(){
@@ -225,34 +279,93 @@ namespace TpotSSL.GameComTools {
     }
 
     public class GameComBank {
+        /// <summary>
+        /// X position in the ROM.
+        /// </summary>
         public          int             X;
+
+        /// <summary>
+        /// Y position in the ROM.
+        /// </summary>
         public          int             Y;
+
+        /// <summary>
+        /// Byte index the bank starts at in the rom.
+        /// </summary>
         public          int             ByteStart;
 
+        /// <summary>
+        /// Image data for this bank.
+        /// </summary>
         public          GameComImage    Image;
 
         public static   int             SizeInBytes => 16384;
+
+        /// <summary>
+        /// Raw byte array.
+        /// </summary>
         public          byte[]          RawBytes    => Image.RawBytes;
 
+        /// <summary>
+        /// Create from game.com image.
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="byteStart"></param>
         public GameComBank(GameComImage image, int x, int y, int byteStart){
             Image       = image;
             X           = x;
             Y           = y;
             ByteStart   = byteStart;
         }
-
+        /// <summary>
+        /// Create from bitmap image.
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="byteStart"></param>
         public GameComBank(Bitmap image, int x, int y, int byteStart) {
-            Image       = new GameComImage(image);
-            X           = x;
-            Y           = y;
-            ByteStart   = byteStart;
+            Image = new GameComImage(image);
+            X = x;
+            Y = y;
+            ByteStart = byteStart;
+        }
+        /// <summary>
+        /// Create from bytes.
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="byteStart"></param>
+        public GameComBank(byte[] bytes, int x, int y, int byteStart) {
+            Image = new GameComImage(bytes);
+            X = x;
+            Y = y;
+            ByteStart = byteStart;
         }
 
-        public GameComBank(byte[] bytes, int x, int y, int byteStart) {
-            Image       = new GameComImage(bytes);
-            X           = x;
-            Y           = y;
-            ByteStart   = byteStart;
+        /// <summary>
+        /// Get Byte at index.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public byte this[int index] {
+            get => RawBytes[ByteStart + index];
+            set => RawBytes[ByteStart + index] = value;
         }
+        /// <summary>
+        /// Get byte at rectangle position. (This does not grab pixels. Each byte has 4 pixels.)
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public byte this[int x, int y] {
+            get => RawBytes[ByteStart + x + y * 64];
+            set => RawBytes[ByteStart + x + y * 64] = value;
+        }
+
+
     }
 }

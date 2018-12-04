@@ -47,9 +47,6 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="TpotSSL.GameComTools">
-      <HintPath>..\TpotSSL.GameComTools\bin\Debug\TpotSSL.GameComTools.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainForm.cs">
@@ -253,6 +250,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="Resources\GamecomHDK.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TpotSSL.GameComTools\TpotSSL.GameComTools.csproj">
+      <Project>{05eeece7-7ede-40e4-9b6b-3c29f58a60ca}</Project>
+      <Name>TpotSSL.GameComTools</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
