@@ -63,6 +63,7 @@ namespace TpotSSL.GameComTools {
         /// Does the rom have a valid header.
         /// </summary>
         public bool                 IsValidRom;
+
         /// <summary>
         /// Game Icon as Image
         /// </summary>
@@ -73,6 +74,9 @@ namespace TpotSSL.GameComTools {
         public          int         SizeInBytes     => RawBytes.Length;
         public          byte[]      RawBytes        => FullImage.RawBytes;
 
+        /// <summary>
+        /// Game.com rom magic number.
+        /// </summary>
         public const    string      TigerId         = "TigerDMGC";
 
         public static Dictionary<ushort, GameComGame> KnownGamesById = new Dictionary<ushort, GameComGame>(){
@@ -155,12 +159,15 @@ namespace TpotSSL.GameComTools {
             FullImage.RawBytes[index + 1]   = IconX;
             FullImage.RawBytes[index + 2]   = IconY;
 
-            // Convert the rom name into ascii bytes and apply to the array.
+            // Convert the game name into an ascii bytes array.
+            // Todo: Some error checking. The name can currently be set with non-ascii characters. A problem waiting to happen.
             byte[] nameBytes = Encoding.ASCII.GetBytes(GameName);
 
+            // Apply the newly converted bytes to the byte array
             for(int i = 0; i < 9; i++)
                 FullImage.RawBytes[index+3+i] = nameBytes[i];
         }
+
         /// <summary>
         /// Save rom as binary file.
         /// </summary>
@@ -181,10 +188,14 @@ namespace TpotSSL.GameComTools {
         /// <param name="bankIndex"></param>
         /// <param name="image"></param>
         public void ReplaceBank(int bankIndex, GameComImage image){
+            // Grab the bank object for convenience.
             GameComBank bank = MemoryBanks[bankIndex];
+
+            // Draw the new bank to the full rom image.
             using(Graphics g = Graphics.FromImage(FullImage.Bitmap))
                 g.DrawImage(image.Bitmap, bank.X, bank.Y);
             
+            // Then apply the changes to the bytes.
             for(int i = 0; i < image.RawBytes.Length; i++)
                 FullImage.RawBytes[bank.ByteStart + i] = image.RawBytes[i];
         }
@@ -194,9 +205,13 @@ namespace TpotSSL.GameComTools {
         /// </summary>
         /// <param name="filePath"></param>
         public GameComRom(string filePath){
+            // Create an image out of the entire rom, for the HDK.
             FullImage       = new GameComImage(File.ReadAllBytes(filePath));
+
+            // Then split the large image up into 256x256 pixel banks.
             MemoryBanks     = GameComImage.SplitBanks(FullImage);
 
+            // Search for the header location, and grab header data!
             GrabHeaderData(SearchForHeader());
             FilePath = filePath;
         }
@@ -236,22 +251,33 @@ namespace TpotSSL.GameComTools {
         /// <summary>
         /// Fill this instance's variables with the header data.
         /// </summary>
-        /// <param name="index"></param>
+        /// <param name="index">Location of header in bytes</param>
         public void GrabHeaderData(int index){
+            // If location of the header given is invalid, then exit.
+            // Maybe the header couldn't be found, or it isn't a valid rom.
             if(index < 0)
                 return;
 
-            IconBankNo  = RawBytes[index];
-            IconX       = RawBytes[index + 1];
-            IconY       = RawBytes[index + 2];
+            // Set icon data from the bytes in the header.
+            IconBankNo              = RawBytes[index];
+            IconX                   = RawBytes[index + 1];
+            IconY                   = RawBytes[index + 2];
 
-            GameName    = Encoding.ASCII.GetString(RawBytes, index+3, 9);
+            // Set the game's name to bytes from the header converted into an ascii string.
+            // Please note that gamecom game's have a name that is always exactly 9 characters in length.
+            GameName                = Encoding.ASCII.GetString(RawBytes, index+3, 9);
 
+            // Refresh icon image.
             RefreshIcon();
-            GameId              = BitConverter.ToUInt16(RawBytes, index + 13);
 
-            IsValidRom            = true;
-            HeaderStartIndex    = index;
+            // Set the game id from header bytes. (The value is an unsigned short, so it has to be converted from two bytes.
+            GameId                  = BitConverter.ToUInt16(RawBytes, index + 13);
+
+            // We found the header, and all is good, so clearly this rom is valid.
+            IsValidRom              = true;
+
+            // Keep the position of the header for future reference.
+            HeaderStartIndex        = index;
         }
 
         /// <summary>
@@ -259,11 +285,17 @@ namespace TpotSSL.GameComTools {
         /// </summary>
         /// <returns>Location of header.</returns>
         public int SearchForHeader(){
+            // Grab the magic number from the expected location
             string tigerId = Encoding.ASCII.GetString(RawBytes, 5, 9);
+
+            // If it was found return the location of the header.
             if(tigerId == TigerId)
                 return 14;
 
+            // If not, try at another common location.
             tigerId = Encoding.ASCII.GetString(RawBytes, 0x40005, 9);
+
+            // If it was found return the header location, if not return -1.
             return tigerId == TigerId ? 0x4000E : -1;
         }
 

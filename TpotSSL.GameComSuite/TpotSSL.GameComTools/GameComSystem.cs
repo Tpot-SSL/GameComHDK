@@ -136,6 +136,8 @@ namespace TpotSSL.GameComTools {
         public GameComSystem() {
             AddressMap = new byte[0xFFFF];
 
+            // Set up register objects.
+            // These mainly just exist for convenience.
             R   = new GameComRegisters(this, 0x0,  0x10);
             IE  = new GameComRegisters(this, 0x10, 0x2);
             IR  = new GameComRegisters(this, 0x12, 0x2);
@@ -148,9 +150,25 @@ namespace TpotSSL.GameComTools {
     public class GameComVRAM {
         private readonly GameComSystem  _system;
         private readonly int            _start;
+
+        /// <summary>
+        /// Width in pixels.
+        /// </summary>
         public  const    byte           PixelWidth  = 200;
+
+        /// <summary>
+        /// Height in pixels.
+        /// </summary>
         public  const    byte           PixelHeight = 160;
+
+        /// <summary>
+        /// Width in bytes.
+        /// </summary>
         public  const    byte           Width       = PixelWidth/4;
+
+        /// <summary>
+        /// Height in bytes.
+        /// </summary>
         public  const    byte           Height      = PixelHeight;
 
         public GameComVRAM(GameComSystem system, int start) {
@@ -163,6 +181,12 @@ namespace TpotSSL.GameComTools {
             set => _system.AddressMap[_start+index] = value;
         }
 
+        /// <summary>
+        /// Get byte at rectangle position. Please note that this does not grab pixels, and each byte contains 4 pixels.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
         public byte this[int x, int y] {
             get => _system.AddressMap[_start + x + y * Width];
             set => _system.AddressMap[_start + x + y * Width] = value;
@@ -171,14 +195,16 @@ namespace TpotSSL.GameComTools {
         public void RectCopy(GameComRom rom, byte bankno, byte x, byte y, byte w, byte h, byte destx, byte desty) => RectCopy(rom.MemoryBanks[bankno], x, y, w, h, destx, desty);
 
         public void RectCopy(GameComBank bank, byte x, byte y, byte w, byte h, byte destx, byte desty) {
-            for(int iy=0; iy<h; ++iy) {
+            // Cycle through the bytes in the rectangle and apply them.
+            for(int iy = 0; iy < h; ++iy) {
                 for(int ix = 0; ix < w; ++ix) {
-                    this[destx+ix, desty+iy] = bank[x+ix, y+iy];
+                    this[destx + ix, desty + iy] = bank[x + ix, y + iy];
                 }
             }
         }
 
         public void RectCopy(GameComVRAM page, byte x, byte y, byte w, byte h, byte destx, byte desty) {
+            // Cycle through the bytes in the rectangle and apply them.
             for(int iy = 0; iy < h; ++iy) {
                 for(int ix = 0; ix < w; ++ix) {
                     this[destx + ix, desty + iy] = page[x + ix, y + iy];
@@ -197,6 +223,7 @@ namespace TpotSSL.GameComTools {
             _start      = start;
             _count      = count;
         }
+
         public byte this[int index] {
             get => _system.AddressMap[_start+index];
             set => _system.AddressMap[_start+index] = value;
