@@ -7,11 +7,30 @@ using System.Text;
 using System.IO;
 
 namespace TpotSSL.GameComTools {
+    /// <summary>
+    /// Game.com Image for graphics.
+    /// </summary>
     public class GameComImage :IDisposable{
+        /// <summary>
+        /// Raw bytes of binary image.
+        /// </summary>
         public byte[]       RawBytes;
+
+        /// <summary>
+        /// 32bpp Image representation.
+        /// </summary>
         public Bitmap       Bitmap;
+
+        /// <summary>
+        /// Width in pixels.
+        /// </summary>
         public int          Width           = 256;
+
+        /// <summary>
+        /// Height in pixels.
+        /// </summary>
         public int          Height          = 256;
+
         public static int   DefaultFileSize = 16384;
 
         public static readonly Color White       = Color.FromArgb(255, 255, 255);
@@ -46,36 +65,45 @@ namespace TpotSSL.GameComTools {
         /// <summary>
         /// General purpose. Get a specified bit from a byte as boolean.
         /// </summary>
-        /// <param name="b"></param>
+        /// <param name="sourceByte"></param>
         /// <param name="bitIndex"></param>
         /// <returns></returns>
-        public static bool GetBit(byte b, byte bitIndex)                    => (b & (1 << bitIndex)) != 0;
+        public static bool GetBit(byte sourceByte, byte bitIndex)                    => (sourceByte & (1 << bitIndex)) != 0;
 
         /// <summary>
         /// Get full byte from 4 pixels.
         /// </summary>
-        /// <param name="p1"></param>
-        /// <param name="p2"></param>
-        /// <param name="p3"></param>
-        /// <param name="p4"></param>
+        /// <param name="pixel0">First Pixel</param>
+        /// <param name="pixel1">Second Pixel </param>
+        /// <param name="pixel2">Third Pixel</param>
+        /// <param name="pixel3">Fourth Pixel</param>
         /// <returns></returns>
-        public static byte GetByte(byte p1, byte p2, byte p3, byte p4)      => (byte)(p1 + (p2 << 2) + (p3 << 4) + (p4 << 6));
+        public static byte GetByte(byte pixel0, byte pixel1, byte pixel2, byte pixel3)      => (byte)(pixel0 + (pixel1 << 2) + (pixel2 << 4) + (pixel3 << 6));
 
         /// <summary>
         /// Get full byte from 4 pixel colors.
         /// </summary>
-        /// <param name="p1"></param>
-        /// <param name="p2"></param>
-        /// <param name="p3"></param>
-        /// <param name="p4"></param>
+        /// <param name="pixel0">First Pixel</param>
+        /// <param name="pixel1">Second Pixel </param>
+        /// <param name="pixel2">Third Pixel</param>
+        /// <param name="pixel3">Fourth Pixel</param>
         /// <returns></returns>
-        public static byte GetByte(Color p1, Color p2, Color p3, Color p4)  => (byte)((GetPixel(p4)) + (GetPixel(p3) << 2) + (GetPixel(p2) << 4) + (GetPixel(p1) << 6));
+        public static byte GetByte(Color pixel0, Color pixel1, Color pixel2, Color pixel3)  => (byte)((GetPixel(pixel3)) + (GetPixel(pixel2) << 2) + (GetPixel(pixel1) << 4) + (GetPixel(pixel0) << 6));
         public static byte GetPixel(Color col)                              => (byte)Palette.IndexOf(GetCompatibleColor(col));
         public static byte GetPixel(byte b, byte pIndex)                    => (byte)((GetBit(b, (byte)(pIndex*2)) ? 1 : 0) + (GetBit(b, (byte)(pIndex*2 + 1)) ? 2 : 0));
         public static Color GetColor(byte b, byte pIndex)                   => Palette[GetPixel(b, pIndex)];
 
+        /// <summary>
+        /// Creates a tranparent image from an alpha mask.
+        /// </summary>
         public static Bitmap MergeAlpha(string image, string alpha) => MergeAlpha(new Bitmap(image), new Bitmap(alpha));
 
+        /// <summary>
+        /// Creates a tranparent image from an alpha mask.
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="alpha"></param>
+        /// <returns></returns>
         public static Bitmap MergeAlpha(Bitmap image, Bitmap alpha){
             Bitmap bitmap = image.Clone() as Bitmap;
             for(int y = 0; y < image.Height; ++y){
@@ -93,12 +121,12 @@ namespace TpotSSL.GameComTools {
             }
             return bitmap;
         }
+
         /// <summary>
         /// Fighters Megamix Color Fix
         /// </summary>
         /// <param name="filename"></param>
-        /// <param name="game"></param>
-        public static void FixColor(string filename, GameComGame game){
+        public static void FixColor(string filename){
             Color sColor = DarkGray;
             Color dColor = White;
 
@@ -410,15 +438,24 @@ namespace TpotSSL.GameComTools {
             int i           = 0;
             string ext      = Path.GetExtension(filename);
             string fname    = Path.GetFileNameWithoutExtension(filename);
+
+            // Go through the current image in 256x256 chunks.
             for(int y = 0; y < Bitmap.Height; y += 256){
                 for(int x = 0; x < Bitmap.Width; x += 256){
+
+                    // Clone cropped instances.
                     Bitmap image = Bitmap.Clone(new Rectangle(x, y, 256, 256), PixelFormat.Format32bppArgb);
+
+                    // Save Image file
                     image.Save(fname + i + ext);
+
+                    // Delete image
                     image.Dispose();
                     image = null;
-                    GC.Collect();
+                   
                     i++;
                 }
+                GC.Collect();
             }
         }
         /// <summary>

@@ -1,5 +1,5 @@
-# GameComHDK
-A working Homebrew development kit for the Tiger Game.com, as well as various tools and libraries for handling game.com data and rom files.
+# Game.com HDK
+A ready homebrew development kit for the Tiger Game.com, as well as various tools and libraries for handling game.com data and rom files.
 This project is still a work in progress, but it's already able to compile game.com code, and handle game.com graphics.
 
 Do keep in mind that writing game.com code is still in it's early stages.
@@ -8,7 +8,10 @@ But I/O ports, additional rom carts, and audio are still somewhat a mystery.
 
 Resources:
   Game.Com Microcontroller Docs: http://pdf.datasheetcatalog.com/datasheet/Sharp/mXuyzuq.pdf
+  
   Hexcode Documentation: [located in the root of the repo]
+  
+  Explorer Shell Extensions: https://github.com/GerbilSoft/rom-properties
 
 Todo:
   - ROM code Disassembler

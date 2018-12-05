@@ -6,29 +6,56 @@ using System.Text;
 using System.IO;
 
 namespace TpotSSL.GameComTools {
+
+    /// <summary>
+    /// Known Game.com software releases.
+    /// </summary>
     public enum GameComGame {
+        /// <summary> Fighters MegaMix [Id: 36646]</summary>
         FightersMegamix,
+        /// <summary> Sonic JAM [Id: 37682]</summary>
         SonicJam,
+        /// <summary> Frogger [Id: 38680]</summary>
         Frogger,
+        /// <summary> Centipede [Id: 40481]</summary>
         Centipede,
+        /// <summary> Resident Evil 2 [Id: 61498]</summary>
         ResidentEvil2,
+        /// <summary> Henry [Id: 40498]</summary>
         Henry,
+        /// <summary> Game.com Internet [Id: 45843]</summary>
         GameComInternet,
+        /// <summary> Tiger Web Link [Id: 42240]</summary>
         TigerWebLink,
+        /// <summary> Mortal Kombat Trilogy [Id: 47124]</summary>
         MortalKombat,
+        /// <summary> Jeopardy [Id: 12657]</summary>
         Jeopardy,
+        /// <summary> Indy 500  [Id: 50770]</summary>
         Indy500,
+        /// <summary> Batman And Robin [Id: 40497]</summary>
         BatmanAndRobin,
+        /// <summary> Duke Nukem 3D [Id: 58155]</summary>
         DukeNukem3D,
+        /// <summary> Monopoly [Id: 37637]</summary>
         Monopoly,
+        /// <summary> Wheel Of Fortune 1 and 2 [Id: 49732]</summary>
         WheelOfFortune,
+        /// <summary> William's Arcade Classics [Id: 35349]</summary>
         WilliamsArcade,
+        /// <summary> Quiz Wiz [Id: 53585]</summary>
         QuizWiz,
+        /// <summary> Jurassic Park [Id: 59714]</summary>
         JurassicPark,
+        /// <summary> Scrabble [Id: 57364]</summary>
         Scrabble,
+        /// <summary> Tiger Casino [Id: 58385]</summary>
         TigerCasino
     }
   
+    /// <summary>
+    /// Game.com ROM file and info.
+    /// </summary>
     public class GameComRom : IDisposable {
         public int                  HeaderStartIndex = -1;
         public string               FilePath;
@@ -69,9 +96,18 @@ namespace TpotSSL.GameComTools {
         /// </summary>
         public Bitmap               GameIcon;
 
+        /// <summary>
+        /// 16KB Memory bank objects.
+        /// </summary>
         public List<GameComBank>    MemoryBanks;
 
+        /// <summary>
+        /// Rom size in bytes.
+        /// </summary>
         public          int         SizeInBytes     => RawBytes.Length;
+        /// <summary>
+        /// Array of raw byte data.
+        /// </summary>
         public          byte[]      RawBytes        => FullImage.RawBytes;
 
         /// <summary>
@@ -79,6 +115,9 @@ namespace TpotSSL.GameComTools {
         /// </summary>
         public const    string      TigerId         = "TigerDMGC";
 
+        /// <summary>
+        /// Known game.com software by id.
+        /// </summary>
         public static Dictionary<ushort, GameComGame> KnownGamesById = new Dictionary<ushort, GameComGame>(){
             {36646, GameComGame.FightersMegamix },  {37682, GameComGame.SonicJam },     {38680, GameComGame.Frogger },
             {45843, GameComGame.GameComInternet },  {50770, GameComGame.Indy500 },      {47124, GameComGame.MortalKombat },
@@ -89,6 +128,11 @@ namespace TpotSSL.GameComTools {
             {58385, GameComGame.TigerCasino },      {53585, GameComGame.QuizWiz },
         };
 
+        /// <summary>
+        /// Get name of game from known games.
+        /// </summary>
+        /// <param name="game"></param>
+        /// <returns></returns>
         public static string GetGameName(GameComGame game){
             switch(game) {
                 case GameComGame.FightersMegamix:
@@ -216,6 +260,12 @@ namespace TpotSSL.GameComTools {
             FilePath = filePath;
         }
 
+        /// <summary>
+        /// Move icon position and refresh.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
         public Bitmap RefreshIcon(byte x, byte y) {
             IconX       = x;
             IconY       = y;
@@ -223,12 +273,24 @@ namespace TpotSSL.GameComTools {
             return RefreshIcon();
         }
 
+        /// <summary>
+        /// Change Icon bank and refresh.
+        /// </summary>
+        /// <param name="bankNo"></param>
+        /// <returns></returns>
         public Bitmap RefreshIcon(byte bankNo) {
             IconBankNo  = bankNo;
 
             return RefreshIcon();
         }
 
+        /// <summary>
+        /// Move icon, change bank, and refresh.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="bankNo"></param>
+        /// <returns></returns>
         public Bitmap RefreshIcon(byte x, byte y, byte bankNo) {
             IconX       = x;
             IconY       = y;
@@ -298,7 +360,9 @@ namespace TpotSSL.GameComTools {
             // If it was found return the header location, if not return -1.
             return tigerId == TigerId ? 0x4000E : -1;
         }
-
+        /// <summary>
+        /// Dispose this instance.
+        /// </summary>
         public void Dispose(){
             FullImage.Dispose();
             MemoryBanks.Clear();
@@ -331,7 +395,10 @@ namespace TpotSSL.GameComTools {
         /// </summary>
         public          GameComImage    Image;
 
-        public static   int             SizeInBytes => 16384;
+        /// <summary>
+        /// Size of bank in bytes.
+        /// </summary>
+        public const    int             SizeInBytes = 16384;
 
         /// <summary>
         /// Raw byte array.
@@ -364,6 +431,7 @@ namespace TpotSSL.GameComTools {
             Y = y;
             ByteStart = byteStart;
         }
+
         /// <summary>
         /// Create from bytes.
         /// </summary>
@@ -387,6 +455,7 @@ namespace TpotSSL.GameComTools {
             get => RawBytes[ByteStart + index];
             set => RawBytes[ByteStart + index] = value;
         }
+
         /// <summary>
         /// Get byte at rectangle position. (This does not grab pixels. Each byte has 4 pixels.)
         /// </summary>
