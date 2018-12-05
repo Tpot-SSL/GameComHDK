@@ -1,0 +1,348 @@
+________________
+
+< Game.com assembly hexcode documentation >
+< V1 >
+< Credit: Blitpost ( Tpot, StoneBanana, Mr.Potatobadger ) >
+TODO:
+  - Figure out BBC and BBS arguments
+  - Describe each of the assembly commands
+  Optional :
+  - Describe each hexcode
+________________
+
+Assembler Symbol Index
+_____________
+r       -> Register (byte)
+rr      -> Register pair (word)
+R       -> Register file (byte)
+RR      -> Register file pair (word)
+@r      -> Register indirect (byte)
+(r)+    -> Register indirect auto-increment (byte)
+-(r)    -> Register indirect auto-decrement (byte)
+n(r)    -> Register index (byte)
+@rr     -> Register pair indirect (word)
+(rr)+   -> Register pair indirect auto-increment (word)
+-(rr)   -> Register pair indirect auto-decrement (word)
+nn(rr)  -> Register pair index (word)
+@nn(r)  -> Index Indirect
+
+Additional Symbol Index
+_____________
+
+U -> (xxXXXxxx) (0-7)
+V -> (xxxxxXXX) (0-7)
+
+t -> (XXxxxxxx)
+     00 - register indirect
+     01 - register indirect auto-increment
+     10 - register index
+     11 - register indirect auto-decrement
+
+{SS} -> (xXxxxxxx)
+    0 - @rrVX
+    1 - @YYZZ
+
+Q -> If the rightmost bit in a set of 3 (xxX) is on, 7 is added to the result (101 = 1100, 5 = C)
+
+L(##) -> Relative executing location. 
+   This one is a bit harder to explain, and is only used with branches.
+   If (Xxxxxxxx) is 0, add (xXXXXXXX) to the current location of execution.
+   If (Xxxxxxxx) is 1, subtract (xXXXXXXX) from the current location of execution.
+   
+LN(##) -> Same as L, except if adding, add 2 to ##, and if subtracting flip bits (XXXXXXxx) on ##. (WHY?????)
+
+tt -> t with register pairs
+
+X -> 2nd byte 
+Y -> 3rd byte 
+Z -> 4th byte 
+
+i(#) -> Instruction by hex #  (i(9) = DEC)
+
+XX/YY/ZZ -> exact hex value of byte
+
+
+Hex Codes
+___________________
+
+$00   CLR     RXX
+$01   NEG     RXX
+$02   COM     RXX
+$03   RR      RXX
+$04   RL      RXX
+$05   RRC     RXX
+$06   RLC     RXX
+$07   SRL     RXX
+$08   INC     RXX
+$09   DEC     RXX
+$0A   SRA     RXX
+$0B   SLL     RXX
+$0C   DA      RXX
+$0D   SWAP    RXX
+$0E   PUSH    RXX
+$0F   POP     RXX
+
+$10   CMP     rUX, rVX
+$11   ADD     rUX, rVX
+$12   SUB     rUX, rVX
+$13   ADC     rUX, rVX
+$14   SBC     rUX, rVX
+$15   AND     rUX, rVX
+$16   OR      rUX, rVX
+$17   XOR     rUX, rVX
+$18   INCW    RRXX
+$19   DECW    RRXX
+$1A   i(V)    t0U
+$1B   i(V+8)  t0U
+$1C   BCLR    YY(rUU),#VV [Note: if t isn't 00, the instruction becomes illegal]
+$1D   BSET    YY(rUU),#VV [Note: if t isn't 00, the instruction becomes illegal]
+$1E   PUSHW   RRXX
+$1F   POPW    RRXX
+
+$20   CMP     rUX, tVX
+$21   ADD     rUX, tVX
+$22   SUB     rUX, tVX
+$23   ADC     rUX, tVX
+$24   SBC     rUX, tVX
+$25   AND     rUX, tVX
+$26   OR      rUX, tVX
+$27   XOR     rUX, tVX
+$28   MOV     rUX, tVX
+$29   MOV     tVX, rUX
+ ________
+/ TODO 
+$2A   BBC     ????, #??, ???? (XX YY ZZ)
+$2B   BBS     ??(r??), #??, ???? (XX YY ZZ)
+\________
+
+$2C   EXTS    RRXX      
+$2D   DM      #XX      
+$2E   MOV     PS0, #XXh 
+$2F   BTST    RXX, #YY     
+
+$30   CMP     rUX, @rrVQX
+$31   ADD     rUX, @rrVQX
+$32   SUB     rUX, @rrVQX
+$33   ADC     rUX, @rrVQX
+$34   SBC     rUX, @rrVQX
+$35   AND     rUX, @rrVQX
+$36   OR      rUX, @rrVQX
+$37   XOR     rUX, @rrVQX
+$38   MOV     rUX, @rrVQX
+$39   MOV     @rrVQX, rUX
+$3A   MOVW    rrUQX, @rrVQX
+$3B   MOVW    ttUQX, rrVQX
+$3C   MOVW    rrUQX, rrVQX [Note: if t isn't 00, the instruction becomes illegal]
+$3D   DM      RXX   
+$3E   JMP     {SS}
+$3F   CALL    {SS}
+
+$40   CMP     RYY, RXX
+$41   ADD     RYY, RXX
+$42   SUB     RYY, RXX
+$43   ADC     RYY, RXX
+$44   SBC     RYY, RXX
+$45   AND     RYY, RXX
+$46   OR      RYY, RXX
+$47   XOR     RYY, RXX
+$48   MOV     RYY, RXX
+$49   CALL    XXYY
+$4A   MOVW    RRYY, RRXX
+$4B   MOVW    RRXX, #YYZZ
+$4C   MULT    RRYY, RXX
+$4D   MULT    RRYY, #XX
+ ________
+/ TODO 
+$4E   BMOV & ILLEGAL (what??)
+$4F   BAND & BCMP    (what??)
+\________
+
+$50   CMP     RYY, #XX
+$51   ADD     RYY, #XX
+$52   SUB     RYY, #XX
+$53   ADC     RYY, #XX
+$54   SBC     RYY, #XX
+$55   AND     RYY, #XX
+$56   OR      RYY, #XX
+$57   XOR     RYY, #XX
+$58   MOV     RYY, #XX
+$59   ILLEGAL
+$5A   ILLEGAL
+$5B   ILLEGAL
+$5C   DIV     RRYY, RRXX
+$5D   DIV     RRYY, #XX
+$5E   MOVM    RXX,  #YY, RZZ
+$5F   MOVM    RXX,  #YY, #ZZ
+
+$60   CMPW    RRYY, RRXX
+$61   ADDW    RRYY, RRXX
+$62   SUBW    RRYY, RRXX
+$63   ADCW    RRYY, RRXX
+$64   SBCW    RRYY, RRXX
+$65   ANDW    RRYY, RRXX
+$66   ORW     RRYY, RRXX
+$67   XORW    RRYY, RRXX
+$68   CMPW    RRYY, #YYZZ
+$69   ADDW    RRYY, #YYZZ
+$6A   SUBW    RRYY, #YYZZ
+$6B   ADCW    RRXX, #YYZZ
+$6C   SBCW    RRXX, #YYZZ
+$6D   ANDW    RRXX, #YYZZ
+$6E   ORW     RRXX, #YYZZ
+$6F   XORW    RRXX, #YYZZ
+
+$70   DBNZ    r00, LN(XX)
+$71   DBNZ    r01, LN(XX)
+$72   DBNZ    r02, LN(XX)
+$73   DBNZ    r03, LN(XX)
+$74   DBNZ    r04, LN(XX)
+$75   DBNZ    r05, LN(XX)
+$76   DBNZ    r06, LN(XX)
+$77   DBNZ    r07, LN(XX)
+$78   MOVW    rr00, #XXYY
+$79   MOVW    rr08, #XXYY
+$7A   MOVW    rr02, #XXYY
+$7B   MOVW    rr0A, #XXYY
+$7C   MOVW    rr04, #XXYY
+$7D   MOVW    rr0C, #XXYY
+$7E   MOVW    rr06, #XXYY
+$7F   MOVW    rr0E, #XXYY
+
+ ________
+/ TODO 
+$80   BBC     RXX, #00, ???? (XX YY)
+$81   BBC     RXX, #01, ???? (XX YY)
+$82   BBC     RXX, #02, ???? (XX YY)
+$83   BBC     RXX, #03, ???? (XX YY)
+$84   BBC     RXX, #04, ???? (XX YY)
+$85   BBC     RXX, #05, ???? (XX YY)
+$86   BBC     RXX, #06, ???? (XX YY)
+$87   BBC     RXX, #07, ???? (XX YY)
+$88   BBS     RXX, #00, ???? (XX YY)
+$89   BBS     RXX, #01, ???? (XX YY)
+$8A   BBS     RXX, #02, ???? (XX YY)
+$8B   BBS     RXX, #03, ???? (XX YY)
+$8C   BBS     RXX, #04, ???? (XX YY)
+$8D   BBS     RXX, #05, ???? (XX YY)
+$8E   BBS     RXX, #06, ???? (XX YY)
+$8F   BBS     RXX, #07, ???? (XX YY)
+\________
+
+$90   JMP F   XXYY
+$91   JMP LT  XXYY
+$92   JMP LE  XXYY
+$93   JMP ULE XXYY
+$94   JMP OV  XXYY
+$95   JMP MI  XXYY
+$96   JMP Z   XXYY
+$97   JMP C   XXYY
+$98   JMP T   XXYY
+$99   JMP GE  XXYY
+$9A   JMP GT  XXYY
+$9B   JMP UGT XXYY
+$9C   JMP NOV XXYY
+$9D   JMP PL  XXYY
+$9E   JMP NZ  XXYY
+$9F   JMP NC  XXYY
+
+$A0   BCLR    RXX, #00
+$A1   BCLR    RXX, #01
+$A2   BCLR    RXX, #02
+$A3   BCLR    RXX, #03
+$A4   BCLR    RXX, #04
+$A5   BCLR    RXX, #05
+$A6   BCLR    RXX, #06
+$A7   BCLR    RXX, #07
+$A8   BCLR    RXX, #08
+$A9   BCLR    RXX, #09
+$AA   BSET    RXX, #02
+$AB   BSET    RXX, #03
+$AC   BSET    RXX, #04
+$AD   BSET    RXX, #05
+$AE   BSET    RXX, #06
+$AF   BSET    RXX, #07
+
+$B0   MOV     r00, RXX
+$B1   MOV     r01, RXX
+$B2   MOV     r02, RXX
+$B3   MOV     r03, RXX
+$B4   MOV     r04, RXX
+$B5   MOV     r05, RXX
+$B6   MOV     r06, RXX
+$B7   MOV     r07, RXX
+$B8   MOV     RXX, r00
+$B9   MOV     RXX, r01
+$BA   MOV     RXX, r02
+$BB   MOV     RXX, r03
+$BC   MOV     RXX, r04
+$BD   MOV     RXX, r05
+$BE   MOV     RXX, r06
+$BF   MOV     RXX, r07
+
+$C0   MOV     r00, #XX
+$C1   MOV     r01, #XX
+$C2   MOV     r02, #XX
+$C3   MOV     r03, #XX
+$C4   MOV     r04, #XX
+$C5   MOV     r05, #XX
+$C6   MOV     r06, #XX
+$C7   MOV     r07, #XX
+$C8   MOV     p10, #XX
+$C9   MOV     p11, #XX
+$CA   MOV     p12, #XX
+$CB   MOV     p13, #XX
+$CC   MOV     p14, #XX
+$CD   MOV     p15, #XX
+$CE   MOV     p16, #XX
+$CF   MOV     p17, #XX
+
+$D0   BR  F   L(XX)
+$D1   BR  LT  L(XX)
+$D2   BR  LE  L(XX)
+$D3   BR  ULE L(XX)
+$D4   BR  OV  L(XX)
+$D5   BR  MI  L(XX)
+$D6   BR  Z   L(XX)
+$D7   BR  C   L(XX)
+$D8   BR  T   L(XX)
+$D9   BR  GE  L(XX)
+$DA   BR  GT  L(XX)
+$DB   BR  UGT L(XX)
+$DC   BR  NOV L(XX)
+$DD   BR  PL  L(XX)
+$DE   BR  NZ  L(XX)
+$DF   BR  NC  L(XX)
+
+$E0   CALS    10XX
+$E1   CALS    11XX
+$E2   CALS    12XX
+$E3   CALS    13XX
+$E4   CALS    14XX
+$E5   CALS    15XX
+$E6   CALS    16XX
+$E7   CALS    17XX
+$E8   CALS    18XX
+$E9   CALS    19XX
+$EA   CALS    1AXX
+$EB   CALS    1BXX
+$EC   CALS    1CXX
+$ED   CALS    1DXX
+$EE   CALS    1EXX
+$EF   CALS    1FXX
+
+$F0   STOP
+$F1   HALT
+$F2   ILLEGAL
+$F3   ILLEGAL
+$F4   ILLEGAL
+$F5   ILLEGAL
+$F6   ILLEGAL
+$F7   ILLEGAL
+$F8   RET
+$F9   IRET
+$FA   CLRC
+$FB   COMC
+$FC   SETC
+$FD   EI
+$FE   DI
+$FF   NOP

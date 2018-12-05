@@ -21,7 +21,15 @@ namespace TpotSSL.GameComTools {
             return lines;
         }
 
+        /// <summary>
+        /// Assemble a rom from file. 
+        /// This does not work. Very much a W.I.P.
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="startIndex"></param>
+        /// <returns></returns>
         public static List<byte> Assemble(string file, int startIndex = 0) {
+            throw new NotImplementedException();
             string[] asm                        = File.ReadAllLines(file);
             List<byte>              code        = new List<byte>();
             Dictionary<string, int> methods     = new Dictionary<string, int>();
@@ -155,10 +163,22 @@ namespace TpotSSL.GameComTools {
                 case 0x54:
                     return "SBC";
                 case 0x15:
+                case 0x25:
+                case 0x35:
+                case 0x45:
+                case 0x55:
                     return "AND";
                 case 0x16:
+                case 0x26:
+                case 0x36:
+                case 0x46:
+                case 0x56:
                     return "OR";
                 case 0x17:
+                case 0x27:
+                case 0x37:
+                case 0x47:
+                case 0x57:
                     return "XOR";
                 case 0x18:
                     return "INCW";
@@ -175,6 +195,58 @@ namespace TpotSSL.GameComTools {
                     return "PUSHW";
                 case 0x1F:
                     return "POPW";
+                case 0x28:
+                case 0x29:
+                case 0x2E:
+                case 0x38:
+                case 0x39:
+                case 0x48:
+                case 0xB0:
+                case 0xB1:
+                case 0xB2:
+                case 0xB3:
+                case 0xB4:
+                case 0xB5:
+                case 0xB6:
+                case 0xB7:
+                case 0xB8:
+                case 0xB9:
+                case 0xBA:
+                case 0xBB:
+                case 0xBC:
+                case 0xBD:
+                case 0xBE:
+                case 0xBF:
+                case 0xC0:
+                case 0xC1:
+                case 0xC2:
+                case 0xC3:
+                case 0xC4:
+                case 0xC5:
+                case 0xC6:
+                case 0xC7:
+                case 0xC8:
+                case 0xC9:
+                case 0xCA:
+                case 0xCB:
+                case 0xCC:
+                case 0xCD:
+                case 0xCE:
+                case 0xCF:
+                    return "MOV";
+                case 0x3F:
+                case 0x49:
+                    return "CALL";
+                case 0xF0:
+                    return "STOP";
+                case 0xF1:
+                    return "HALT";
+                case 0xF8:
+                    return "RET";
+                case 0xF9:
+                    return "IRET";
+                case 0xFF:
+                    return "NOP";
             }
             return "ILLEGAL";
         }
